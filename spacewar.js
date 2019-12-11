@@ -1,6 +1,7 @@
 //-----------------------------------------------------------------------------------------------------------
 // Spacewar!
 // Copyright (C) 2019 by Mark R. Cornwell
+// MIT License; see LIECNSE for details
 //
 // Ref: https://en.wikipedia.org/wiki/Spacewar!
 //

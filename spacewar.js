@@ -17,6 +17,7 @@
 // Long overdue!
 //
 // TBD
+// - enter a;; the following enhancements into github
 // - add abiity to fire missiles, track their movements on screen
 // - add a bun animation on the ship to show rocket burn
 // - needs to be 2 player
@@ -29,7 +30,7 @@
 // - simulate posphor persistence to create 1960's radar CRT effect
 // - sound effect for rock burn
 // - sound effect for missile fire
-// - sound effect for missle hit, explosion
+// - sound effect for missle hit,explosion 
 // - background music, atmopherics
 // - starfield background
 // - invert screen to black spece background, ships in white
@@ -73,15 +74,15 @@ function Ship(x,y,dx,dy,radius,theta) {
 	    this.p3y =  (-this.radius  * sin(this.theta) -  (this.radius/4) * cos(this.theta))  + this.y;
 
 	    c.beginPath()
-		c.strokeStyle = 'blue';
-		c.fillStyle = 'rgba(0, 0, 255, 0.4)';
+		c.strokeStyle = 'white';
+		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
 		c.fill();
 	    c.moveTo(this.p1x,this.p1y);
 	    c.lineTo(this.p2x,this.p2y);
 	    c.lineTo(this.p3x,this.p3y);
 	    c.lineTo(this.p1x,this.p1y);
-		c.strokeStyle = 'blue';
-		c.fillStyle = 'rgba(0, 0, 255, 0.4)';
+		c.strokeStyle = 'white';
+		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
 		c.fill();
 		c.stroke();
 	}
@@ -119,12 +120,13 @@ function Ship(x,y,dx,dy,radius,theta) {
 
 }
 
-document.addEventListener('keypress',commandKey);
+document.addEventListener('keydown',commandKeyDown);
+document.addEventListener('keyup', commandKeyUp);
 
 var rotationDelta = PI/20;
 var burnForce = 1;
 
-function commandKey(e) {
+function commandKeyDown(e) {
 	console.log(e);
 	if (e.key == "[") {
 		ship1.rotate(rotationDelta);
@@ -132,22 +134,34 @@ function commandKey(e) {
 		ship1.rotate(-rotationDelta);
 	} else if (e.key == "=") {
 		ship1.burn(burnForce);
+		ship1.burnOn = true;
 	} else if (e.key == "q") {
 		ship2.rotate(rotationDelta);
 	} else if (e.key == "w") {
 		ship2.rotate(-rotationDelta);
 	} else if (e.key == "2") {
 		ship2.burn(burnForce);
+		burnOn = true;
 	}
 }
+
+function commandKeyUp(e) {
+	console.log(e);
+	if (e.key == "=") {
+		ship1.burnOn = false
+	} else if (e.key == "2") {
+		ship2.burnOn = false
+	}
+}
+
 
 // SETUP
 
 var shipArray = [];
 var radius = 40
 
-ship1 = new Ship(canvas.width*(3/4),canvas.height*(1/2),0,-0.2,radius,-PI/2);
-ship2 = new Ship(canvas.width*(1/4),canvas.height*(1/2),0,0.2,radius,PI/2);
+ship1 = new Ship( canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
+ship2 = new Ship( canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
 
 
 shipArray.push(ship1);

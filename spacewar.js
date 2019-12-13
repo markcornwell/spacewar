@@ -17,26 +17,18 @@
 // my first attempt at spacewar since Chirstmas vacation, 1979.  40 years give or take a couple of weeks.
 // Long overdue!
 //
-// TBD
-// - enter a;; the following enhancements into github
-// - add abiity to fire missiles, track their movements on screen
-// - add a bun animation on the ship to show rocket burn
-// - needs to be 2 player
-// - provide an AI for single payer mode
-// - add a star in the center and account for gravity
-// - add a way to set parameters: gravity, sun or no sun, ship velocity, missile velocity, burn strenth
-// - accurate portrayals of spaceships" the needle" and "the wedge"
-// - support for panci button -- teleport to random location of screen
-// - ships should wrap around the edges of the screen
-// - simulate posphor persistence to create 1960's radar CRT effect
-// - sound effect for rock burn
-// - sound effect for missile fire
-// - sound effect for missle hit,explosion 
-// - background music, atmopherics
-// - starfield background
-// - invert screen to black spece background, ships in white
+// Architecture
+//
+//  Layer 2            Ships         Prepresents Ships with controls   
+//                       |
+//  Layer 1            Shapes        Representations of Shapes, rotations, and translations of same.
+//                       |
+//  Layer 0          Matrix Ops      Basic primitives for 2x2 matrix operations and 2x1 vector operations
+//
 //-----------------------------------------------------------------------------------------------------------
 
+//------------------------------------------- Rendering
+//
 var canvas = document.querySelector('canvas');
 
 canvas.width = window.innerWidth;
@@ -50,43 +42,124 @@ var c = canvas.getContext('2d');
 
 console.log(canvas);
 
-function Ship(x,y,dx,dy,radius,theta) {
+
+// Matrix operations
+//
+function Matrix(a11,a12,a21,a22) {
+	this.a11 = a11;
+	this.a12 = a12;
+	this.a21 = a21;
+	this.a22 = a22;
+
+	this.multm = function(M) {
+		return new Matrix
+			( this.a11 * M.a11 + this.a12 * M.a21
+			, this.a11 * M.a12 + this.a12 * M.a22
+			, this.a21 * M.a11 + this.a22 * M.a21
+			, this.a21 * M.a12 + this.a22 * M.a22
+			)
+	}
+
+	this.multv = function(v) {
+		return new Vector
+			(this.a11 * v.x + this.a12 * v.y
+			,this.a21 * v.x + this.a22 * v.y
+			)
+	}
+}
+
+function Vector(x,y) {
+	this.x = x;
+	this.y = y;
+
+	this.translate = function (v) {
+		return new Vector(this.x + v.x, this.y + v.y);
+	}
+
+	this.rotate = function(theta) {
+		return R(theta).multv(this);
+	}
+}
+
+// Matrix to rotate theta radians about the origin
+function R(theta) {
+	return new Matrix( cos(theta), -sin(theta), sin(theta), cos(theta) )
+}
+//
+// ----------------------------------------  Shapes  
+//
+
+function Shape(pointList) {
+
+	this.pointList = pointList;
+
+	this.rotate = function(theta){
+		return new Shape(this.pointList.map(p => R(theta).multv(p)));
+	}
+
+	this.translate = function(v) {
+		return new Shape(this.pointList.map(p => p.translate(v)));
+	}
+
+	this.draw = function() {
+		if (pointList.length == 0) {
+			console.log("Shape draw has empty pointList");
+			return this;
+		}
+    	c.beginPath();
+		c.strokeStyle = 'white';
+		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
+		c.fill();
+
+		c.moveTo(pointList[0].x,pointList[0].y)
+
+		for (var i = 1; i<pointList.length; i++) {
+			c.lineTo(pointList[i].x,pointList[i].y);
+		}
+        
+        c.lineTo(pointList[0].x,pointList[0].y);
+
+		c.strokeStyle = 'white';
+		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
+		c.fill();
+		c.stroke();
+	}
+}
+
+// Shapes used by Ships
+
+var scale = 40;
+
+
+// ugly -- needs cleanup
+var Wedge = new Shape( [new Vector(scale,0)
+			  			 ,new Vector(-scale, scale/4)
+			             ,new Vector(-scale, -scale/4)
+			             ])
+
+// Need a way of linking these shapes to the physics to the entities
+// of my game.  Can I leverage the concept behind box2D?  Need to 
+// review them and see whta good ideas I can crib.
+
+
+
+//-------------------------------------------- Ships
+
+function Ship(shape,x,y,dx,dy,radius,theta) {
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
 	this.dy = dy;
 	this.radius = radius;
 	this.theta = theta;
-	
-	// encapsulates the appearance of the object
-	this.draw = function() {
+	this.burnOn = false;
+	this.shape = shape;
 
-		// cCrners of untranslated ship triangle are at p1=(r,0) p2=(-r,r/4), p3=(-r,-r/4)
-	    // inline the rotation matrix to rotate by theta and then translate by (x,y)
-	    // https://en.wikipedia.org/wiki/Rotation_matrix
-
-	    this.p1x =  ( this.radius * cos(this.theta)  -          0        * sin(this.theta))   + this.x;
-	    this.p1y =  ( this.radius * sin(this.theta)  +          0        * cos(this.theta))   + this.y;
-
-	    this.p2x =  (-this.radius * cos(this.theta)  -  (this.radius/4) * sin(this.theta)) + this.x;
-	    this.p2y =  (-this.radius * sin(this.theta)  +  (this.radius/4) * cos(this.theta)) + this.y;
-
-	    this.p3x =  (-this.radius  * cos(this.theta) +  (this.radius/4) * sin(this.theta))  + this.x;
-	    this.p3y =  (-this.radius  * sin(this.theta) -  (this.radius/4) * cos(this.theta))  + this.y;
-
-	    c.beginPath()
-		c.strokeStyle = 'white';
-		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
-		c.fill();
-	    c.moveTo(this.p1x,this.p1y);
-	    c.lineTo(this.p2x,this.p2y);
-	    c.lineTo(this.p3x,this.p3y);
-	    c.lineTo(this.p1x,this.p1y);
-		c.strokeStyle = 'white';
-		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
-		c.fill();
-		c.stroke();
-	}
+    this.draw = function() {
+    	var rotatedShape = this.shape.rotate(this.theta);
+    	var translatedShape = rotatedShape.translate(new Vector(this.x,this.y));
+    	translatedShape.draw();
+    }
 
 	// encapsulates the game physics of the object
 	this.update = function() {
@@ -100,7 +173,7 @@ function Ship(x,y,dx,dy,radius,theta) {
 		this.x += this.dx;
 		this.y += this.dy;
 
-		this.draw();
+		this.draw(canvas);
 	}
 
 	this.rotate = function(delta) {
@@ -155,19 +228,17 @@ function commandKeyUp(e) {
 	}
 }
 
-
 // SETUP
 
 var shipArray = [];
-var radius = 40
+var radius = scale
 
-ship1 = new Ship( canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
-ship2 = new Ship( canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
+ship1 = new Ship(Wedge, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
+ship2 = new Ship(Wedge, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
 
 
 shipArray.push(ship1);
 shipArray.push(ship2);
-
 
 console.log(shipArray);
 

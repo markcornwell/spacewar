@@ -27,8 +27,7 @@
 //
 //-----------------------------------------------------------------------------------------------------------
 
-//------------------------------------------- Rendering
-//
+
 var canvas = document.querySelector('canvas');
 
 canvas.width = window.innerWidth;
@@ -126,23 +125,6 @@ function Shape(pointList) {
 	}
 }
 
-// Shapes used by Ships
-
-var scale = 40;
-
-
-// ugly -- needs cleanup
-var Wedge = new Shape( [new Vector(scale,0)
-			  			 ,new Vector(-scale, scale/4)
-			             ,new Vector(-scale, -scale/4)
-			             ])
-
-// Need a way of linking these shapes to the physics to the entities
-// of my game.  Can I leverage the concept behind box2D?  Need to 
-// review them and see whta good ideas I can crib.
-
-
-
 //-------------------------------------------- Ships
 
 function Ship(shape,x,y,dx,dy,radius,theta) {
@@ -194,6 +176,9 @@ function Ship(shape,x,y,dx,dy,radius,theta) {
 
 }
 
+//---------- Keybord Commands
+
+
 document.addEventListener('keydown',commandKeyDown);
 document.addEventListener('keyup', commandKeyUp);
 
@@ -228,7 +213,18 @@ function commandKeyUp(e) {
 	}
 }
 
-// SETUP
+//-------------------------------------------------
+// SETUP --- Define the Shapes and Objects Here
+//-------------------------------------------------
+
+var scale = 40;
+
+
+// ugly -- needs cleanup
+var Wedge = new Shape( [new Vector(scale,0)
+			  			 ,new Vector(-scale, scale/4)
+			             ,new Vector(-scale, -scale/4)
+			             ])
 
 var shipArray = [];
 var radius = scale
@@ -242,7 +238,9 @@ shipArray.push(ship2);
 
 console.log(shipArray);
 
-// ANIMATE
+//-----------------------------------------
+// ANIMATE -- main animation loop
+//-----------------------------------------
 
 function animate() {
 	requestAnimationFrame(animate);

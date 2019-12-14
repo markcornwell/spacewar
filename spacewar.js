@@ -42,7 +42,7 @@ var c = canvas.getContext('2d');
 console.log(canvas);
 
 
-// Matrix operations
+//------------------------------------------- Matrix operations
 //
 function Matrix(a11,a12,a21,a22) {
 	this.a11 = a11;
@@ -81,12 +81,14 @@ function Vector(x,y) {
 }
 
 // Matrix to rotate theta radians about the origin
+
 function R(theta) {
 	return new Matrix( cos(theta), -sin(theta), sin(theta), cos(theta) )
 }
-//
-// ----------------------------------------  Shapes  
-//
+
+// A Shape is a sequence of points centered about the origin.  
+// We can rotate the shape about its center and and translate
+// to an arbitrary position on hte canvas.
 
 function Shape(pointList) {
 
@@ -125,9 +127,11 @@ function Shape(pointList) {
 	}
 }
 
-//-------------------------------------------- Ships
+// A Ship will have postion x,y and a velocity dx,dy.  It will also have
+// orientation described by an angle theta measured from the horizontal
+// in radians, e.g. Pi/2 points straight up. 
 
-function Ship(shape,x,y,dx,dy,radius,theta) {
+function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
@@ -136,14 +140,20 @@ function Ship(shape,x,y,dx,dy,radius,theta) {
 	this.theta = theta;
 	this.burnOn = false;
 	this.shape = shape;
+	this.flame = flame;
 
     this.draw = function() {
-    	var rotatedShape = this.shape.rotate(this.theta);
-    	var translatedShape = rotatedShape.translate(new Vector(this.x,this.y));
-    	translatedShape.draw();
+    	this.shape.rotate(this.theta).translate(new Vector(this.x,this.y)).draw();
+    	if (this.burnOn) {
+    		this.flame.rotate(this.theta).translate(new Vector(this.x,this.y)).draw();
+    	}     
     }
 
-	// encapsulates the game physics of the object
+	// Update ecapsulates the game physics of the object.  Right now ships bounce off
+	// the edges of the canvas.  This will change.  We want the ships that go
+	// off the top to come back on the bottoms, and simmilarly wrap around on
+	// all found sides of the drawing area.
+
 	this.update = function() {
 		if (this.x + this.radius > innerWidth || this.x - this.radius < 0) {
 			this.dx = -this.dx;
@@ -158,6 +168,9 @@ function Ship(shape,x,y,dx,dy,radius,theta) {
 		this.draw(canvas);
 	}
 
+	// Rotate by adding some angle to theta.  Keeps theta normalized between
+	// -2*PI and +2*PI.
+
 	this.rotate = function(delta) {
 		console.log("rotate");
 		this.theta = this.theta + delta;
@@ -168,6 +181,9 @@ function Ship(shape,x,y,dx,dy,radius,theta) {
 		}
 	}
 
+	// Burn applies a force in the direction theta which will modify the dx,dy
+	// components of the velocity.
+
 	this.burn = function(force) {
 		console.log("Burn");
 	    this.dx = this.dx + force * cos(this.theta);
@@ -176,7 +192,11 @@ function Ship(shape,x,y,dx,dy,radius,theta) {
 
 }
 
-//---------- Keybord Commands
+// Keybord Commands and Controls
+//
+// We want the burn as long as the key is pressed
+// and end when the player releases the key.
+//
 
 
 document.addEventListener('keydown',commandKeyDown);
@@ -200,7 +220,7 @@ function commandKeyDown(e) {
 		ship2.rotate(-rotationDelta);
 	} else if (e.key == "2") {
 		ship2.burn(burnForce);
-		burnOn = true;
+		ship2.burnOn = true;
 	}
 }
 
@@ -219,18 +239,21 @@ function commandKeyUp(e) {
 
 var scale = 40;
 
-
 // ugly -- needs cleanup
-var Wedge = new Shape( [new Vector(scale,0)
-			  			 ,new Vector(-scale, scale/4)
-			             ,new Vector(-scale, -scale/4)
-			             ])
+var Wedge = new Shape( [ new Vector(scale,0)
+			  		   , new Vector(-scale, scale/4)
+			           , new Vector(-scale, -scale/4)
+			           ]);
+
+var WedgeFlame = new Shape( [ new Vector (-scale, 0)
+							, new Vector (-scale * 5/4, 0)
+							]);
 
 var shipArray = [];
 var radius = scale
 
-ship1 = new Ship(Wedge, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
-ship2 = new Ship(Wedge, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
+ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
+ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
 
 
 shipArray.push(ship1);

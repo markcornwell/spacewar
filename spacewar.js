@@ -20,9 +20,9 @@
 // Architecture
 //
 //  Layer 2            Ships         Prepresents Ships with controls   
-//                       |
+//                        
 //  Layer 1            Shapes        Representations of Shapes, rotations, and translations of same.
-//                       |
+//                        
 //  Layer 0          Matrix Ops      Basic primitives for 2x2 matrix operations and 2x1 vector operations
 //
 //-----------------------------------------------------------------------------------------------------------
@@ -79,8 +79,6 @@ function Vector(x,y) {
 		return R(theta).multv(this);
 	}
 }
-
-// Matrix to rotate theta radians about the origin
 
 function R(theta) {
 	return new Matrix( cos(theta), -sin(theta), sin(theta), cos(theta) )
@@ -165,7 +163,7 @@ function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 		this.x += this.dx;
 		this.y += this.dy;
 
-		this.draw(canvas);
+		this.draw();
 	}
 
 	// Rotate by adding some angle to theta.  Keeps theta normalized between
@@ -190,7 +188,59 @@ function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	    this.dy = this.dy + force * sin(this.theta);
 	}
 
+	// Fire creates a missile at the nose of the ship point x,y plus a tiny
+	// delta so it does not overlap the ship.  The velocity of the ship is
+	// taken as the basis fo the veolicty of the missile, then an additional
+	// velocity is added in the direction o the current orientation of hte
+	// ship.
+
+	this.fire = function() {
+		missileArray.push(new Missile( this.x + scale * cos(this.theta)
+									 , this.y + scale * sin(this.theta)
+									 , this.dx + missileSpeed * cos(this.theta)
+									 , this.dy + missileSpeed * sin(this.theta)
+									 , initialMissileLife
+									 ))
+	}
 }
+
+// Missiles are simpler than ships.  They have a position, but not a dimension
+// they render on the screen as points, each appearing as a dot on the screen.
+// They have a positin and a x-y position as well as a lifetime.  As they move the life
+// is dectrmented.  When the life hits 0 or becomes negative the missile goes away.
+
+function Missile(x,y,dx,dy,life) {
+	this.x = x;
+	this.y = y;
+	this.dx = dx;
+	this.dy = dy;
+	this.life = life;
+
+	this.draw = function() {
+		c.beginPath();
+		c.arc(this.x,this.y,2,0,2*Math.PI,false);
+        c.stroke();
+	}
+
+	this.update = function() {
+		this.life -= 1;
+
+		// right now missile bounce off the edges.  We should change this to warp.
+		if (this.x > innerWidth || this.x < 0) {
+			this.dx = -this.dx;
+		}
+		if (this.y > innerHeight || this.y  < 0) {
+			this.dy = -this.dy;
+		}
+	
+		this.x += this.dx;
+		this.y += this.dy;
+
+		this.draw();
+	}
+
+}
+
 
 // Keybord Commands and Controls
 //
@@ -214,6 +264,8 @@ function commandKeyDown(e) {
 	} else if (e.key == "=") {
 		ship1.burn(burnForce);
 		ship1.burnOn = true;
+	} else if (e.code == "ShiftRight") {
+		ship1.fire();
 	} else if (e.key == "q") {
 		ship2.rotate(rotationDelta);
 	} else if (e.key == "w") {
@@ -221,6 +273,8 @@ function commandKeyDown(e) {
 	} else if (e.key == "2") {
 		ship2.burn(burnForce);
 		ship2.burnOn = true;
+	} else if (e.code == "ShiftLeft") {
+		ship2.fire();
 	}
 }
 
@@ -237,7 +291,7 @@ function commandKeyUp(e) {
 // SETUP --- Define the Shapes and Objects Here
 //-------------------------------------------------
 
-var scale = 40;
+var scale = 20;
 
 // ugly -- needs cleanup
 var Wedge = new Shape( [ new Vector(scale,0)
@@ -259,7 +313,9 @@ ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,
 shipArray.push(ship1);
 shipArray.push(ship2);
 
-console.log(shipArray);
+var missileArray = [];
+var missileSpeed = 5;
+const initialMissileLife = 100
 
 //-----------------------------------------
 // ANIMATE -- main animation loop
@@ -269,8 +325,20 @@ function animate() {
 	requestAnimationFrame(animate);
 	c.clearRect(0,0,innerWidth,innerHeight);
 	
+	// Update Shipes
 	for (var i  = 0; i < shipArray.length; i++) {
 		shipArray[i].update()
+	}
+
+    // Clear away missiles whose life has expired. 
+	// Oldest missiles are always on the front of the array
+	while( missileArray.length >0 && missileArray[0].life < 0) {
+		missileArray.shift();
+	}
+
+    // update missiles]][==[[]]]
+	for (var i = 0; i < missileArray.length; i++) {
+		missileArray[i].update()
 	}
 }
 

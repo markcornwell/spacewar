@@ -41,9 +41,10 @@ var c = canvas.getContext('2d');
 
 console.log(canvas);
 
+//-----------------------------------------------------------
+// Matrix and Vector multiplication, translation, rotation
+//-----------------------------------------------------------
 
-//------------------------------------------- Matrix operations
-//
 function Matrix(a11,a12,a21,a22) {
 	this.a11 = a11;
 	this.a12 = a12;
@@ -84,9 +85,75 @@ function R(theta) {
 	return new Matrix( cos(theta), -sin(theta), sin(theta), cos(theta) )
 }
 
+//-----------------------------------------------------------------
+// Collision Detection
+// http://www.jeffreythompson.org/collision-detection/line-line.php
+//-----------------------------------------------------------------
+
+function lineLine(x1,y1,x2,y2,x3,y3,x4,y4) {
+
+  // calculate the distance to intersection point
+  var uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+  var uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+
+  // if uA and uB are between 0-1, lines are colliding
+  return (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1);
+}
+
+function polyLine(pointList, x1, y1, x2, y2) {
+
+  // go through each of the vertices, plus the next
+  // vertex in the list
+  var next;
+  for (var current=0; current < pointList.length; current++) {
+
+    // get next vertex in list
+    // if we've hit the end, wrap around to 0
+    next = current+1;
+    if (next == pointList.length) {
+    	next = 0;
+    }
+
+    // get the PVectors at our current position
+    // extract X/Y coordinates from each
+    x3 = pointList[current].x;
+    y3 = pointList[current].y;
+    x4 = pointList[next].x;
+    y4 = pointList[next].y;
+
+    // do a Line/Line comparison
+    // if true, return 'true' immediately and
+    // stop testing (faster)
+    hit =lineLine(x1, y1, x2, y2, x3, y3, x4, y4);
+    if (hit) {
+    	console.log("polyLine hit!")
+      	return true;
+    } 
+  }
+  return false;
+}
+
+
+// Self test on load
+function check(name,e1,e2) {
+	if (e1 == e2) {
+		console.log(name," pass");
+	} else {
+		console.log(name," FAIL");
+	}
+}
+
+check("t1", lineLine(-5,-5, +5,+5, -5,+5, +5,-5), true );
+check("t2", lineLine( 0,0,  0,10,  5,0,  5,10 ), false );
+check("t3", polyLine([new Vector(0,0), new Vector(0,10), new Vector(10,10)],0,10,10,0), true);
+check("t4", polyLine([new Vector(0,0), new Vector(0,10), new Vector(10,10)],15,15,20,20), false);
+
+
+//------------------------------------------------------------
 // A Shape is a sequence of points centered about the origin.  
 // We can rotate the shape about its center and and translate
-// to an arbitrary position on hte canvas.
+// to an arbitrary position on the canvas.
+//------------------------------------------------------------
 
 function Shape(pointList) {
 
@@ -102,13 +169,13 @@ function Shape(pointList) {
 
 	this.draw = function() {
 		if (pointList.length == 0) {
-			console.log("Shape draw has empty pointList");
+			console.log("Warning: Shape draw has empty pointList");
 			return this;
 		}
     	c.beginPath();
 		c.strokeStyle = 'white';
 		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
-		c.fill();
+		//c.fill();
 
 		c.moveTo(pointList[0].x,pointList[0].y)
 
@@ -120,14 +187,25 @@ function Shape(pointList) {
 
 		c.strokeStyle = 'white';
 		//c.fillStyle = 'rgba(0, 0, 255, 0.4)';
-		c.fill();
+		//c.fill();
 		c.stroke();
 	}
+
+    // does the line intersect any of the slides of the Shape (Polygon?)
+	//this.polyLineCollide = function(x1,y1,x2,y2) {
+		//console.log(polyLine);
+	//	return polyLine(this.pointList,x1,y2,x2,y2);
+	//}
 }
 
 // A Ship will have postion x,y and a velocity dx,dy.  It will also have
 // orientation described by an angle theta measured from the horizontal
 // in radians, e.g. Pi/2 points straight up. 
+
+
+const missileSpeed = 3;
+const missileLife = 150
+var missileArray = [];
 
 function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	this.x = x;
@@ -139,6 +217,7 @@ function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	this.burnOn = false;
 	this.shape = shape;
 	this.flame = flame;
+	this.explode = false;
 
     this.draw = function() {
     	this.shape.rotate(this.theta).translate(new Vector(this.x,this.y)).draw();
@@ -147,10 +226,15 @@ function Ship(shape,flame,x,y,dx,dy,radius,theta) {
     	}     
     }
 
+    this.shapeInPosition = function () {
+    	return this.shape.rotate(this.theta).translate(new Vector(this.x,this.y))
+    }
+
 	// Update ecapsulates the game physics of the object.  Right now ships bounce off
 	// the edges of the canvas.  This will change.  We want the ships that go
 	// off the top to come back on the bottoms, and simmilarly wrap around on
-	// all found sides of the drawing area.
+	// all found sides of the drawing a
+
 
 	this.update = function() {
 		if (this.x + this.radius > innerWidth || this.x - this.radius < 0) {
@@ -170,7 +254,7 @@ function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	// -2*PI and +2*PI.
 
 	this.rotate = function(delta) {
-		console.log("rotate");
+		//console.log("rotate");
 		this.theta = this.theta + delta;
 		if (this.theta > (2*PI))  {
 			this.theta = this.theta - (2*PI);
@@ -199,7 +283,7 @@ function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 									 , this.y + scale * sin(this.theta)
 									 , this.dx + missileSpeed * cos(this.theta)
 									 , this.dy + missileSpeed * sin(this.theta)
-									 , initialMissileLife
+									 , missileLife
 									 ))
 	}
 }
@@ -222,7 +306,7 @@ function Missile(x,y,dx,dy,life) {
         c.stroke();
 	}
 
-	this.update = function() {
+	this.update = function(shipArray) {
 		this.life -= 1;
 
 		// right now missile bounce off the edges.  We should change this to warp.
@@ -232,21 +316,32 @@ function Missile(x,y,dx,dy,life) {
 		if (this.y > innerHeight || this.y  < 0) {
 			this.dy = -this.dy;
 		}
-	
+
+		// look for any ships missile might have it
+		//
+		for (var i  = 0; i < shipArray.length; i++) {
+			var pointList = shipArray[i].shapeInPosition().pointList;
+			if (polyLine(pointList, this.x, this.y, this.x + 10*this.dx, this.y + 10*this.dy)) {
+				console.log("missile hit!");
+				shipArray[i].explode = true;
+				this.life = 0;
+			}
+		}
+
+	    // upate the missile position
 		this.x += this.dx;
 		this.y += this.dy;
 
 		this.draw();
 	}
-
 }
 
-
+//--------------------------------------------------
 // Keybord Commands and Controls
 //
 // We want the burn as long as the key is pressed
 // and end when the player releases the key.
-//
+//--------------------------------------------------
 
 
 document.addEventListener('keydown',commandKeyDown);
@@ -256,7 +351,7 @@ var rotationDelta = PI/20;
 var burnForce = 1;
 
 function commandKeyDown(e) {
-	console.log(e);
+	//console.log(e);
 	if (e.key == "[") {
 		ship1.rotate(rotationDelta);
 	} else if (e.key == "]") {
@@ -279,7 +374,7 @@ function commandKeyDown(e) {
 }
 
 function commandKeyUp(e) {
-	console.log(e);
+	//console.log(e);
 	if (e.key == "=") {
 		ship1.burnOn = false
 	} else if (e.key == "2") {
@@ -291,7 +386,7 @@ function commandKeyUp(e) {
 // SETUP --- Define the Shapes and Objects Here
 //-------------------------------------------------
 
-var scale = 20;
+var scale = 30;
 
 // ugly -- needs cleanup
 var Wedge = new Shape( [ new Vector(scale,0)
@@ -313,9 +408,6 @@ ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,
 shipArray.push(ship1);
 shipArray.push(ship2);
 
-var missileArray = [];
-var missileSpeed = 5;
-const initialMissileLife = 100
 
 //-----------------------------------------
 // ANIMATE -- main animation loop
@@ -323,6 +415,7 @@ const initialMissileLife = 100
 
 function animate() {
 	requestAnimationFrame(animate);
+
 	c.clearRect(0,0,innerWidth,innerHeight);
 	
 	// Update Shipes
@@ -336,10 +429,19 @@ function animate() {
 		missileArray.shift();
 	}
 
-    // update missiles]][==[[]]]
+    // update missiles
 	for (var i = 0; i < missileArray.length; i++) {
-		missileArray[i].update()
+		missileArray[i].update(shipArray)
 	}
+
+	// remove any exploded ships 
+	var shipArrayNew = [];
+	for (var i = 0; i < shipArray.length; i++) {
+		if (shipArray[i].explode == false) {
+			shipArrayNew.push(shipArray[i])
+		}
+	}
+	shipArray = shipArrayNew;
 }
 
 animate();

@@ -27,128 +27,21 @@
 //
 //-----------------------------------------------------------------------------------------------------------
 
+import { Matrix, Vector, R } from './mat2d.js';
+import { lineLine, polyLine } from './collide.js';
 
+// canvas context setup
 var canvas = document.querySelector('canvas');
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
-this.sin = Math.sin;
-this.cos = Math.cos;
-this.PI = Math.PI;
-
 var c = canvas.getContext('2d');
-
-console.log(canvas);
-
-//-----------------------------------------------------------
-// Matrix and Vector multiplication, translation, rotation
-// on 2D vectors and 2x2 matrices.
-//-----------------------------------------------------------
-
-function Matrix(a11,a12,a21,a22) {
-	this.a11 = a11;
-	this.a12 = a12;
-	this.a21 = a21;
-	this.a22 = a22;
-
-	this.multm = function(M) {
-		return new Matrix
-			( this.a11 * M.a11 + this.a12 * M.a21
-			, this.a11 * M.a12 + this.a12 * M.a22
-			, this.a21 * M.a11 + this.a22 * M.a21
-			, this.a21 * M.a12 + this.a22 * M.a22
-			)
-	}
-
-	this.multv = function(v) {
-		return new Vector
-			(this.a11 * v.x + this.a12 * v.y
-			,this.a21 * v.x + this.a22 * v.y
-			)
-	}
-}
-
-function Vector(x,y) {
-	this.x = x;
-	this.y = y;
-
-	this.translate = function (v) {
-		return new Vector(this.x + v.x, this.y + v.y);
-	}
-
-	this.rotate = function(theta) {
-		return R(theta).multv(this);
-	}
-}
-
-function R(theta) {
-	return new Matrix( cos(theta), -sin(theta), sin(theta), cos(theta) )
-}
-
-//-----------------------------------------------------------------
-// Collision Detection
-// http://www.jeffreythompson.org/collision-detection/line-line.php
-//-----------------------------------------------------------------
-
-function lineLine(x1,y1,x2,y2,x3,y3,x4,y4) {
-
-  // calculate the distance to intersection point
-  var uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-  var uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
-
-  // if uA and uB are between 0-1, lines are colliding
-  return (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1);
-}
-
-function polyLine(pointList, x1, y1, x2, y2) {
-
-  // go through each of the vertices, plus the next
-  // vertex in the list
-  var next;
-  for (var current=0; current < pointList.length; current++) {
-
-    // get next vertex in list
-    // if we've hit the end, wrap around to 0
-    next = current+1;
-    if (next == pointList.length) {
-    	next = 0;
-    }
-
-    // get the PVectors at our current position
-    // extract X/Y coordinates from each
-    x3 = pointList[current].x;
-    y3 = pointList[current].y;
-    x4 = pointList[next].x;
-    y4 = pointList[next].y;
-
-    // do a Line/Line comparison
-    // if true, return 'true' immediately and
-    // stop testing (faster)
-    hit =lineLine(x1, y1, x2, y2, x3, y3, x4, y4);
-    if (hit) {
-    	console.log("polyLine hit!")
-      	return true;
-    } 
-  }
-  return false;
-}
+//console.log(canvas);
 
 
-// Self test on load
-function check(name,e1,e2) {
-	if (e1 == e2) {
-		console.log(name," pass");
-	} else {
-		console.log(name," FAIL");
-	}
-}
-
-check("t1", lineLine(-5,-5, +5,+5, -5,+5, +5,-5), true );
-check("t2", lineLine( 0,0,  0,10,  5,0,  5,10 ), false );
-check("t3", polyLine([new Vector(0,0), new Vector(0,10), new Vector(10,10)],0,10,10,0), true);
-check("t4", polyLine([new Vector(0,0), new Vector(0,10), new Vector(10,10)],15,15,20,20), false);
-
+// abbreviate some math librayr funcitons
+const sin = Math.sin;
+const cos = Math.cos;
+const PI = Math.PI;
 
 //------------------------------------------------------------
 // A Shape is a sequence of points centered about the origin.  
@@ -402,8 +295,8 @@ var WedgeFlame = new Shape( [ new Vector (-scale, 0)
 var shipArray = [];
 var radius = scale
 
-ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
-ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
+var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -PI/2);
+var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  PI/2);
 
 
 shipArray.push(ship1);
@@ -414,7 +307,7 @@ shipArray.push(ship2);
 // ANIMATE -- main animation loop
 //-----------------------------------------
 
-function animate() {
+export function animate() {
 	requestAnimationFrame(animate);
 
 	c.clearRect(0,0,innerWidth,innerHeight);

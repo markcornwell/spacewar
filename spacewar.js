@@ -43,6 +43,7 @@ console.log(canvas);
 
 //-----------------------------------------------------------
 // Matrix and Vector multiplication, translation, rotation
+// on 2D vectors and 2x2 matrices.
 //-----------------------------------------------------------
 
 function Matrix(a11,a12,a21,a22) {

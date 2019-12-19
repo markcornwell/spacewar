@@ -3,11 +3,6 @@
 // Matrix and Vector multiplication, translation, rotation
 // on 2D vectors and 2x2 matrices.
 
-// abbreviate some math librayr funcitons
-const sin = Math.sin;
-const cos = Math.cos;
-
-
 export function Matrix(a11,a12,a21,a22) {
 	this.a11 = a11;
 	this.a12 = a12;
@@ -45,5 +40,5 @@ export function Vector(x,y) {
 }
 
 export function R(theta) {
-	return new Matrix( cos(theta), -sin(theta), sin(theta), cos(theta) )
+	return new Matrix( Math.cos(theta), -Math.sin(theta), Math.sin(theta), Math.cos(theta) )
 }

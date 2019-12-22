@@ -47,9 +47,9 @@ document.addEventListener('keyup', commandKeyUp);
 function commandKeyDown(e) {
 	console.log(e);
 
-	if (e.code == "KeyA") {
+	if (e.code == "KeyD") {
 		ship1.rotate(rotationDelta);
-	} else if (e.code == "KeyD") {
+	} else if (e.code == "KeyA") {
 		ship1.rotate(-rotationDelta);
 	} else if (e.code == "KeyS") {
 		ship1.burn(burnForce);
@@ -58,9 +58,9 @@ function commandKeyDown(e) {
 		//ship1.fire();
 		console.log("fire");
 		new Missile(ship1);
-	} else if (e.code == "KeyJ") {
-		ship2.rotate(rotationDelta);
 	} else if (e.code == "KeyL") {
+		ship2.rotate(rotationDelta);
+	} else if (e.code == "KeyJ") {
 		ship2.rotate(-rotationDelta);
 	} else if (e.code == "KeyK") {
 		ship2.burn(burnForce);

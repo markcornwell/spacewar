@@ -1,6 +1,5 @@
 // missile.js
 //
-
 // Missiles come into being when they are launched from ship.  The shipe's
 // speed and heading determine the speed and heading of the missile.
 

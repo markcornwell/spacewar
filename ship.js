@@ -1,5 +1,5 @@
 // ship.js
-
+//
 // A Ship will have postion x,y and a velocity dx,dy.  It will also have
 // orientation described by an angle theta measured from the horizontal
 // in radians, e.g. Pi/2 points straight up. 
@@ -36,7 +36,7 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	// off the top to come back on the bottoms, and simmilarly wrap around on
 	// all found sides of the drawing a
 
-	this.update = function(c) {
+	this.updateBounce= function(c) {  // unused for now, may bring in as an option
 		if (this.x + this.radius > innerWidth || this.x - this.radius < 0) {
 			this.dx = -this.dx;
 		}
@@ -48,6 +48,16 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 		this.y += this.dy;
 
 		this.draw(c);
+	}
+
+	this.update = function(c) {
+		this.x += this.dx + window.innerWidth;   // stay in positive coordinates
+		this.y += this.dy + window.innerHeight;
+		this.x %= window.innerWidth;             // mod to wrap around screen
+		this.y %= window.innerHeight;
+
+		this.draw(c);                            // core redraw
+
 	}
 
 	// Rotate by adding some angle to theta.  Keeps theta normalized between

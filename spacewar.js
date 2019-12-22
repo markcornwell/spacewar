@@ -19,9 +19,9 @@
 //
 //-----------------------------------------------------------------------------------------------------------
 
-import { Matrix, Vector, R } from './mat2d.js';
-import { lineLine, polyLine } from './collide.js';
-import { Shape } from './shape.js';
+import { Matrix, Vector, R } from './mat2d.js'
+import { lineLine, polyLine } from './collide.js'
+import { Shape } from './shape.js'
 import { Missile, missileArray } from './missile.js'
 import { scale, missileLife, rotationDelta, burnForce } from './parm.js'
 import { Ship } from './ship.js'
@@ -45,48 +45,50 @@ document.addEventListener('keydown',commandKeyDown);
 document.addEventListener('keyup', commandKeyUp);
 
 function commandKeyDown(e) {
-	//console.log(e);
-	if (e.key == "[") {
+	console.log(e);
+
+	if (e.code == "KeyA") {
 		ship1.rotate(rotationDelta);
-	} else if (e.key == "]") {
+	} else if (e.code == "KeyD") {
 		ship1.rotate(-rotationDelta);
-	} else if (e.key == "=") {
+	} else if (e.code == "KeyS") {
 		ship1.burn(burnForce);
 		ship1.burnOn = true;
-	} else if (e.code == "ShiftRight") {
+	} else if (e.code == "KeyW") {
 		//ship1.fire();
+		console.log("fire");
 		new Missile(ship1);
-	} else if (e.key == "q") {
+	} else if (e.code == "KeyJ") {
 		ship2.rotate(rotationDelta);
-	} else if (e.key == "w") {
+	} else if (e.code == "KeyL") {
 		ship2.rotate(-rotationDelta);
-	} else if (e.key == "2") {
+	} else if (e.code == "KeyK") {
 		ship2.burn(burnForce);
 		ship2.burnOn = true;
-	} else if (e.code == "ShiftLeft") {
+	} else if (e.code == "KeyI") {
 		//ship2.fire();
+		console.log("fire");
 		new Missile(ship2);
 	}
 }
 
 function commandKeyUp(e) {
 	//console.log(e);
-	if (e.key == "=") {
+	if (e.code == "KeyS") {
 		ship1.burnOn = false
-	} else if (e.key == "2") {
+	} else if (e.code == "KeyK") {
 		ship2.burnOn = false
 	}
 }
-
 
 //-------------------------------------------------
 // SETUP --- Define the Shapes and Objects Here
 //-------------------------------------------------
 
-var Wedge = new Shape( [ new Vector(scale,0)
-			  		   , new Vector(-scale, scale/4)
-			           , new Vector(-scale, -scale/4)
-			           ]);
+var Wedge = new Shape( 	[ new Vector(scale,0)
+				  		, new Vector(-scale, scale/4) 
+						, new Vector(-scale, -scale/4)  
+						]);
 
 var WedgeFlame = new Shape( [ new Vector (-scale, 0)
 							, new Vector (-scale * 5/4, 0)
@@ -96,13 +98,12 @@ var WedgeFlame = new Shape( [ new Vector (-scale, 0)
 var shipArray = [];
 var radius = scale
 
-var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -Math.PI/2);
-var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  Math.PI/2);
+var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -Math.PI/2);
+var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  Math.PI/2);
 
 
 shipArray.push(ship1);
 shipArray.push(ship2);
-
 
 //-----------------------------------------
 // ANIMATE -- main animation loop

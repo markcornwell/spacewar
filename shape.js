@@ -1,9 +1,12 @@
 // shape.js
 //
-// A Shape is a sequence of points centered about the origin.  
-// We can rotate the shape about its center and and translate
-// to an arbitrary position on the canvas.
+// A Shape is a sequence of points in cartesian coodinates
+// with respect to an orthogonal x,y coodinates. 
+// We can rotate the shape about the origin and and translate
+// that shape to an arbitrary position on the canvas.
 //
+// For any given rotation and translation, a shape will have
+// a bounding box.
 
 import { Vector, R } from './mat2d.js'
 
@@ -36,4 +39,14 @@ export function Shape(pointList) {
 		c.strokeStyle = 'white';
 		c.stroke();
 	}
+}
+
+
+// A box is defined by its top left (x0,y0) and bottom right(x1,y1)
+
+export function Box(x0,y0,x1,y1) {
+	this.x0 = x0;  // left
+	this.y0 = y0;  // top
+	this.x1 = x1;  // rigth
+	this.x2 = x2;  // bottom
 }

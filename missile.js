@@ -16,6 +16,7 @@ export function Missile(ship) {
 	this.dy = ship.dy + missileSpeed * Math.sin(ship.theta);
 	this.life = missileLife;
 	missileArray.push(this);
+	console.log("new missile");
 
 	this.draw = function(c) {
 		c.beginPath();
@@ -24,17 +25,10 @@ export function Missile(ship) {
 	}
 
 	this.update = function(c,shipArray) {
+
 		this.life -= 1;
 
-		// right now missile bounce off the edges.  We should change this to warp.
-		if (this.x > innerWidth || this.x < 0) {
-			this.dx = -this.dx;
-		}
-		if (this.y > innerHeight || this.y  < 0) {
-			this.dy = -this.dy;
-		}
-
-		// look for any ships missile might have it
+		// look for any ships missile might have hit
 		//
 		for (var i  = 0; i < shipArray.length; i++) {
 			var pointList = shipArray[i].shapeInPosition().pointList;
@@ -46,9 +40,14 @@ export function Missile(ship) {
 		}
 
 	    // upate the missile position
-		this.x += this.dx;
-		this.y += this.dy;
+	    //
+		this.x += this.dx + window.innerWidth;   // stay in positive coordinates
+		this.y += this.dy + window.innerHeight;
+		this.x %= window.innerWidth;             // mod to wrap around screen
+		this.y %= window.innerHeight;
 
 		this.draw(c);
 	}
 }
+
+

@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  -ms-touch-action: none;
+      touch-action: none;
+}
+
+canvas {
+  border: 1px solid black;
+  background: black;
+  width: 100%;
+  height: 100vh;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+}
+
+#mobile-controls {
+  display: none;
+}
+
+.mobile-btn {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  z-index: 3;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  font-weight: 700;
+  text-shadow: 2px 2px #111;
+  background: transparent;
+  opacity: .8;
+}
+
+.mobile-btn:focus {
+  outline: none;
+}
+
+.mobile-btn#accel {
+  background: url("/icons/burn.svg") no-repeat center center;
+  background-size: 50%;
+  bottom: 10%;
+  left: 10%;
+  color: #00adef;
+  border-color: #00adef;
+}
+
+.mobile-btn#fire {
+  background: url("/icons/rocket.svg") no-repeat center center;
+  background-size: 40%;
+  bottom: 25%;
+  left: 10%;
+  color: #ed1c24;
+  border-color: #ed1c24;
+}
+
+.mobile-btn#left {
+  background: url("/icons/ccw.svg") no-repeat center center;
+  background-size: 40%;
+  bottom: 15%;
+  right: 30%;
+  color: #3add5e;
+  border-color: #3add5e;
+}
+
+.mobile-btn#right {
+  background: url("/icons/cw.svg") no-repeat center center;
+  background-size: 40%;
+  bottom: 15%;
+  right: 7%;
+  color: #3add5e;
+  border-color: #3add5e;
+}
+
+@media screen and (min-width: 576px) {
+  .mobile-btn#accel {
+    bottom: 10%;
+    left: 10%;
+  }
+  .mobile-btn#fire {
+    bottom: 35%;
+    left: 10%;
+  }
+  .mobile-btn#left {
+    bottom: 15%;
+    right: 30%;
+  }
+  .mobile-btn#right {
+    bottom: 15%;
+    right: 10%;
+  }
+}
+
+#touch-toggle {
+  display: none;
+  top: 10%;
+  right: 5%;
+  color: white;
+  border-radius: 15%;
+  opacity: .5;
+}
+/*# sourceMappingURL=style.css.map */

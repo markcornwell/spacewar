@@ -4,9 +4,14 @@
 // orientation described by an angle theta measured from the horizontal
 // in radians, e.g. Pi/2 points straight up. 
 
-import { Shape } from './shape.js';
-import { Vector } from './mat2d.js';
+import { Shape } from './shape.js'
+import { Vector } from './mat2d.js'
 
+export var shipArray = [];
+
+export function explodeShips() {
+	shipArray = shipArray.filter(ship => (ship.explode == false));
+}
 
 export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	this.x = x;

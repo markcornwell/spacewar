@@ -23,9 +23,9 @@ import { Matrix, Vector, R } from './mat2d.js'
 import { lineLine, polyLine } from './collide.js'
 import { Shape } from './shape.js'
 import { Missile, missileArray } from './missile.js'
-import { scale, missileLife, rotationDelta, burnForce } from './parm.js'
-import { Ship } from './ship.js'
-
+import { shipScale, missileLife, rotationDelta, burnForce } from './parm.js'
+import { Ship, shipArray, explodeShips } from './ship.js'
+import { Star } from './star.js'
 
 // Initialize the canvas context
 
@@ -85,18 +85,16 @@ function commandKeyUp(e) {
 // SETUP --- Define the Shapes and Objects Here
 //-------------------------------------------------
 
-var Wedge = new Shape( 	[ new Vector(scale,0)
-				  		, new Vector(-scale, scale/4) 
-						, new Vector(-scale, -scale/4)  
+var Wedge = new Shape( 	[ new Vector(shipScale,0)
+				  		, new Vector(-shipScale, shipScale/4) 
+						, new Vector(-shipScale, -shipScale/4)  
 						]);
 
-var WedgeFlame = new Shape( [ new Vector (-scale, 0)
-							, new Vector (-scale * 5/4, 0)
+var WedgeFlame = new Shape( [ new Vector (-shipScale, 0)
+							, new Vector (-shipScale * 5/4, 0)
 							]);
 
-
-var shipArray = [];
-var radius = scale
+var radius = shipScale
 
 var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -Math.PI/2);
 var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  Math.PI/2);
@@ -104,6 +102,8 @@ var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2),
 
 shipArray.push(ship1);
 shipArray.push(ship2);
+
+var star = new Star();
 
 //-----------------------------------------
 // ANIMATE -- main animation loop
@@ -113,6 +113,9 @@ export function animate() {
 	requestAnimationFrame(animate);
 
 	c.clearRect(0,0,innerWidth,innerHeight);
+
+	// Update Star - assign gravitational forces to ships
+	star.update(c,shipArray);
 	
 	// Update Shipes
 	for (var i  = 0; i < shipArray.length; i++) {
@@ -130,14 +133,9 @@ export function animate() {
 		missileArray[i].update(c,shipArray)
 	}
 
-	// remove any exploded ships 
-	var shipArrayNew = [];
-	for (var i = 0; i < shipArray.length; i++) {
-		if (shipArray[i].explode == false) {
-			shipArrayNew.push(shipArray[i])
-		}
-	}
-	shipArray = shipArrayNew;
+	// remoave any exploded ships
+	explodeShips();
+
 }
 
 animate();

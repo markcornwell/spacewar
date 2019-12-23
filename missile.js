@@ -3,14 +3,14 @@
 // Missiles come into being when they are launched from ship.  The shipe's
 // speed and heading determine the speed and heading of the missile.
 
-import { scale, missileSpeed, missileLife } from './parm.js';
+import { shipScale, missileSpeed, missileLife } from './parm.js';
 import { polyLine } from './collide.js';
 
 export var missileArray = [];
 
 export function Missile(ship) {
-	this.x = ship.x + scale * 1.5 * Math.cos(ship.theta);
-	this.y = ship.y + scale * 1.5 * Math.sin(ship.theta);
+	this.x = ship.x + shipScale * 1.5 * Math.cos(ship.theta);
+	this.y = ship.y + shipScale * 1.5 * Math.sin(ship.theta);
 	this.dx = ship.dx + missileSpeed * Math.cos(ship.theta);
 	this.dy = ship.dy + missileSpeed * Math.sin(ship.theta);
 	this.life = missileLife;

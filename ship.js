@@ -48,7 +48,7 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 		if (this.y + this.radius > innerHeight || this.y - this.radius < 0) {
 			this.dy = -this.dy;
 		}
-	
+
 		this.x += this.dx;
 		this.y += this.dy;
 

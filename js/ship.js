@@ -41,11 +41,6 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
     	return this.shape.rotate(this.theta).translate(new Vector(this.x,this.y))
     }
 
-	// Update ecapsulates the game physics of the object.  Right now ships bounce off
-	// the edges of the canvas.  This will change.  We want the ships that go
-	// off the top to come back on the bottoms, and simmilarly wrap around on
-	// all found sides of the drawing a
-
 	this.update = function(c) {
 
 		// handle control actions

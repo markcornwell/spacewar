@@ -52,39 +52,27 @@ function commandKeyDown(e) {
 	// Cleaned up confusing if/else chain with a switch statement
 	switch(e.code){
 		case "KeyA":
-			//ship1.rotate(rotationDelta);
 			ship1.rotateLeft = true;
 			break;
 		case "KeyD":
-			//ship1.rotate(-rotationDelta);
 			ship1.rotateRight = true;
 			break;
 		case "KeyS":
-			//ship1.burn(burnForce);
 			ship1.burnOn = true;
 			break;
 		case "KeyW":
-			//ship1.fire();
-			//console.log("fire");
 			ship1.fire = true;
-			//new Missile(ship1);
 			break;
 		case "KeyJ":
-			//ship2.rotate(rotationDelta);
 			ship2.rotateLeft = true;
 			break;
 		case "KeyL":
-			//ship2.rotate(-rotationDelta);
 			ship2.rotateRight = true;
 			break;
 		case "KeyK":
-			//ship2.burn(burnForce);
 			ship2.burnOn = true;
 			break;
 		case "KeyI":
-			//ship2.fire();
-			//console.log("fire");
-			//new Missile(ship2);
 			ship2.fire = true;
 			break;
 	}
@@ -94,59 +82,32 @@ function commandKeyDown(e) {
 function commandKeyUp(e) {
 	switch(e.code){
 		case "KeyA":
-			//ship1.rotate(rotationDelta);
 			ship1.rotateLeft = false;
 			break;
 		case "KeyD":
-			//ship1.rotate(-rotationDelta);
 			ship1.rotateRight = false;
 			break;
 		case "KeyS":
-			//ship1.burn(burnForce);
 			ship1.burnOn = false;
 			break;
 		case "KeyW":
-			//ship1.fire();
-			//console.log("fire");
 			ship1.fire = false;
-			//new Missile(ship1);
 			break;
 		case "KeyJ":
-			//ship2.rotate(rotationDelta);
 			ship2.rotateLeft = false;
 			break;
 		case "KeyL":
-			//ship2.rotate(-rotationDelta);
 			ship2.rotateRight = false;
 			break;
 		case "KeyK":
-			//ship2.burn(burnForce);
 			ship2.burnOn = false;
 			break;
 		case "KeyI":
-			//ship2.fire();
-			//console.log("fire");
-			//new Missile(ship2);
 			ship2.fire = false;
 			break;
 	}
 }
 
-/*
-function commandKeyUp(e) {
-	console.log(e);
-
-	// Cleaned up if/else chain with a switch statement
-	switch(e.code){
-		case "KeyS":
-			ship1.burnOn = false;
-			break;
-		case "KeyK":
-			ship2.burnOn = false;
-			break;
-	}
-}
-*/
 
 // ------------------------------------------------
 // MOBILE CONTROLS

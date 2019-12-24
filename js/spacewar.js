@@ -162,8 +162,8 @@ var WedgeFlame = new Shape( [ new Vector (-shipScale, 0)
 var radius = shipScale;
 
 
-var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.2, radius, -Math.PI/2);
-var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.2, radius,  Math.PI/2);
+var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.5, radius, -Math.PI/2);
+var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.5, radius,  Math.PI/2);
 
 
 shipArray.push(ship1);
@@ -184,7 +184,7 @@ export function animate() {
 	if (starEnable) {
 		star.update(c,shipArray);
 	}
-	
+
 	// Update Shipes
 	for (var i  = 0; i < shipArray.length; i++) {
 		shipArray[i].update(c)

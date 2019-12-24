@@ -23,7 +23,7 @@ import { Matrix, Vector, R } from './mat2d.js'
 import { lineLine, polyLine } from './collide.js'
 import { Shape } from './shape.js'
 import { Missile, missileArray } from './missile.js'
-import { shipScale, missileLife, rotationDelta, burnForce } from './parm.js'
+import { shipScale, missileLife, rotationDelta, burnForce, starEnable } from './parm.js'
 import { Ship, shipArray, explodeShips } from './ship.js'
 import { Star } from './star.js'
 
@@ -62,7 +62,7 @@ function commandKeyDown(e) {
 			break;
 		case "KeyW":
 			//ship1.fire();
-			console.log("fire");
+			//console.log("fire");
 			new Missile(ship1);
 			break;
 		case "KeyJ":
@@ -77,14 +77,14 @@ function commandKeyDown(e) {
 			break;
 		case "KeyI":
 			//ship2.fire();
-			console.log("fire");
+			//console.log("fire");
 			new Missile(ship2);
 			break;
 	}
 }
 
 function commandKeyUp(e) {
-	//console.log(e);
+	console.log(e);
 
 	// Cleaned up if/else chain with a switch statement
 	switch(e.code){
@@ -181,8 +181,10 @@ export function animate() {
 	c.clearRect(0,0,innerWidth,innerHeight);
 	
 	// Update Star - assign gravitational forces to ships
-	star.update(c,shipArray);
-
+	if (starEnable) {
+		star.update(c,shipArray);
+	}
+	
 	// Update Shipes
 	for (var i  = 0; i < shipArray.length; i++) {
 		shipArray[i].update(c)

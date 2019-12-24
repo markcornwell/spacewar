@@ -23,7 +23,8 @@ import { Matrix, Vector, R } from './mat2d.js'
 import { lineLine, polyLine } from './collide.js'
 import { Shape } from './shape.js'
 import { Missile, missileArray } from './missile.js'
-import { shipScale, missileLife, rotationDelta, burnForce, starEnable } from './parm.js'
+//import { shipScale, missileLife, rotationDelta, burnForce, starEnable } from './parm.js'
+import { shipScale, starEnable } from './parm.js'
 import { Ship, shipArray, explodeShips } from './ship.js'
 import { Star } from './star.js'
 
@@ -51,38 +52,87 @@ function commandKeyDown(e) {
 	// Cleaned up confusing if/else chain with a switch statement
 	switch(e.code){
 		case "KeyA":
-			ship1.rotate(rotationDelta);
+			//ship1.rotate(rotationDelta);
+			ship1.rotateLeft = true;
 			break;
 		case "KeyD":
-			ship1.rotate(-rotationDelta);
+			//ship1.rotate(-rotationDelta);
+			ship1.rotateRight = true;
 			break;
 		case "KeyS":
-			ship1.burn(burnForce);
+			//ship1.burn(burnForce);
 			ship1.burnOn = true;
 			break;
 		case "KeyW":
 			//ship1.fire();
 			//console.log("fire");
-			new Missile(ship1);
+			ship1.fire = true;
+			//new Missile(ship1);
 			break;
 		case "KeyJ":
-			ship2.rotate(rotationDelta);
+			//ship2.rotate(rotationDelta);
+			ship2.rotateLeft = true;
 			break;
 		case "KeyL":
-			ship2.rotate(-rotationDelta);
+			//ship2.rotate(-rotationDelta);
+			ship2.rotateRight = true;
 			break;
 		case "KeyK":
-			ship2.burn(burnForce);
+			//ship2.burn(burnForce);
 			ship2.burnOn = true;
 			break;
 		case "KeyI":
 			//ship2.fire();
 			//console.log("fire");
-			new Missile(ship2);
+			//new Missile(ship2);
+			ship2.fire = true;
 			break;
 	}
 }
 
+
+function commandKeyUp(e) {
+	switch(e.code){
+		case "KeyA":
+			//ship1.rotate(rotationDelta);
+			ship1.rotateLeft = false;
+			break;
+		case "KeyD":
+			//ship1.rotate(-rotationDelta);
+			ship1.rotateRight = false;
+			break;
+		case "KeyS":
+			//ship1.burn(burnForce);
+			ship1.burnOn = false;
+			break;
+		case "KeyW":
+			//ship1.fire();
+			//console.log("fire");
+			ship1.fire = false;
+			//new Missile(ship1);
+			break;
+		case "KeyJ":
+			//ship2.rotate(rotationDelta);
+			ship2.rotateLeft = false;
+			break;
+		case "KeyL":
+			//ship2.rotate(-rotationDelta);
+			ship2.rotateRight = false;
+			break;
+		case "KeyK":
+			//ship2.burn(burnForce);
+			ship2.burnOn = false;
+			break;
+		case "KeyI":
+			//ship2.fire();
+			//console.log("fire");
+			//new Missile(ship2);
+			ship2.fire = false;
+			break;
+	}
+}
+
+/*
 function commandKeyUp(e) {
 	console.log(e);
 
@@ -96,6 +146,7 @@ function commandKeyUp(e) {
 			break;
 	}
 }
+*/
 
 // ------------------------------------------------
 // MOBILE CONTROLS
@@ -118,20 +169,35 @@ if (isTouchDevice){
 		  rightRot = document.querySelector('#right');
 
 		burnBtn.ontouchstart = function(){
-			ship1.burn(burnForce);
+			//ship1.burn(burnForce);
 			ship1.burnOn = true;
 		};
 		burnBtn.ontouchend = function(){
 			ship1.burnOn = false;
 		};
+
 		fireBtn.ontouchstart = function(){
-			new Missile(ship1);
+			//new Missile(ship1);
+			ship1.fire = true;
 		};
+		fireBtn.ontouchend = function(){
+			ship1.fire = false;
+		};
+
 		leftRot.ontouchstart = function(){
-			ship1.rotate(-rotationDelta);
+			//ship1.rotate(-rotationDelta);
+			ship1.rotateLeft = true;
 		};
+		leftRot.ontouchend = function(){
+			ship1.rotateLeft = false;
+		};
+
 		rightRot.ontouchstart = function(){
-			ship1.rotate(rotationDelta);
+			//ship1.rotate(rotationDelta);
+			ship1.rotateRight = true;
+		};
+		rightRot.ontouchend = function(){
+			ship1.rotateRight = false;
 		};
 
 		// Enable toggling of touch controls (for touchscreen laptops, external keyboards/gamepads, etc)

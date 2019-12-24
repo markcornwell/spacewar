@@ -6,6 +6,8 @@
 
 import { Shape } from './shape.js'
 import { Vector } from './mat2d.js'
+import { rotationDelta, burnForce } from './parm.js'
+import { Missile } from './missile.js'
 
 export var shipArray = [];
 
@@ -21,6 +23,9 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	this.radius = radius;
 	this.theta = theta;
 	this.burnOn = false;
+	this.rotateRight = false;
+	this.rotateLeft = false;
+	this.fire = false;
 	this.shape = shape;
 	this.flame = flame;
 	this.explode = false;
@@ -41,21 +46,23 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	// off the top to come back on the bottoms, and simmilarly wrap around on
 	// all found sides of the drawing a
 
-	this.updateBounce= function(c) {  // unused for now, may bring in as an option
-		if (this.x + this.radius > innerWidth || this.x - this.radius < 0) {
-			this.dx = -this.dx;
-		}
-		if (this.y + this.radius > innerHeight || this.y - this.radius < 0) {
-			this.dy = -this.dy;
-		}
-
-		this.x += this.dx;
-		this.y += this.dy;
-
-		this.draw(c);
-	}
-
 	this.update = function(c) {
+
+		// handle control actions
+		if (this.burnOn) {
+			this.burn(burnForce);
+		}
+		if (this.rotateRight) {
+			this.rotate(-rotationDelta);
+		}
+		if (this.rotateLeft) {
+			this.rotate(rotationDelta);
+		}
+		if (this.fire) {
+			new Missile(this);
+			this.fire = false;
+		}
+
 		this.x += this.dx + window.innerWidth;   // stay in positive coordinates
 		this.y += this.dy + window.innerHeight;
 		this.x %= window.innerWidth;             // mod to wrap around screen

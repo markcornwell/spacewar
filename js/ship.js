@@ -9,26 +9,40 @@ import { Vector } from './mat2d.js'
 import { rotationDelta, burnForce } from './parm.js'
 import { Missile } from './missile.js'
 
-export var shipArray = [];
+
+//export var shipArray = [];
 
 export function explodeShips() {
-	shipArray = shipArray.filter(ship => (ship.explode == false));
+	//shipArray = shipArray.filter(ship => (ship.explode == false));
+	return shipArray.filter(ship => (ship.explode == false));
 }
 
+
 export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
-	this.x = x;
-	this.y = y;
-	this.dx = dx;
-	this.dy = dy;
-	this.radius = radius;
-	this.theta = theta;
-	this.burnOn = false;
-	this.rotateRight = false;
-	this.rotateLeft = false;
-	this.fire = false;
-	this.shape = shape;
-	this.flame = flame;
-	this.explode = false;
+	return {
+		x: x,
+		y: y;
+		dx: dx,
+		dy: dy,
+		radius: radius,
+		theta: theta,
+		burnOn: false,
+		rotateRight: false,
+		rotateLeft: false,
+		fire: false,
+		shape: shape,
+		flame: flame,
+		explode: false,
+	}
+
+// retruns the shape of the ship rotated and translated into its current position
+export function ship_shapeInPosition(ship) {
+    	return shape_translate(shape_rotate(ship.shape,
+    		                                ship.shape.theta),
+    						   vector(ship.x,ship.y))     
+    }
+
+//------------ Drawing Functions use canvas
 
     this.draw = function(c) {
     	this.shape.rotate(this.theta).translate(new Vector(this.x,this.y)).draw(c);
@@ -37,9 +51,6 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
     	}     
     }
 
-    this.shapeInPosition = function () {
-    	return this.shape.rotate(this.theta).translate(new Vector(this.x,this.y))
-    }
 
 	this.update = function(c) {
 

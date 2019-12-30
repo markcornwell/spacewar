@@ -3,42 +3,46 @@
 // Matrix and Vector multiplication, translation, rotation
 // on 2D vectors and 2x2 matrices.
 
+
+
 export function Matrix(a11,a12,a21,a22) {
-	this.a11 = a11;
-	this.a12 = a12;
-	this.a21 = a21;
-	this.a22 = a22;
+	return { a11: a11, a12: a12, a21: a21, a22: a22 }
+}
 
-	this.multm = function(M) {
-		return new Matrix
-			( this.a11 * M.a11 + this.a12 * M.a21
-			, this.a11 * M.a12 + this.a12 * M.a22
-			, this.a21 * M.a11 + this.a22 * M.a21
-			, this.a21 * M.a12 + this.a22 * M.a22
-			)
-	}
+export function mat2d_multm(A,B) {
+	return Matrix( A.a11 * B.a11 + A.a12 * B.a21
+			     , A.a11 * B.a12 + A.a12 * B.a22
+			     , A.a21 * B.a11 + A.a22 * B.a21
+			     , A.a21 * B.a12 + A.a22 * B.a22
+				 )
+}
 
-	this.multv = function(v) {
-		return new Vector
-			(this.a11 * v.x + this.a12 * v.y
-			,this.a21 * v.x + this.a22 * v.y
-			)
-	}
+export function mat2d_multv(A,v) {
+	return Vector( A.a11 * v.x + A.a12 * v.y
+				 , A.a21 * v.x + A.a22 * v.y
+				 )
+}
+
+export function mat2d_R(theta) {
+	return Matrix( Math.cos(theta)
+		         , -Math.sin(theta)
+		         , Math.sin(theta)
+		         , Math.cos(theta) 
+		         )
 }
 
 export function Vector(x,y) {
-	this.x = x;
-	this.y = y;
-
-	this.translate = function (v) {
-		return new Vector(this.x + v.x, this.y + v.y);
-	}
-
-	this.rotate = function(theta) {
-		return R(theta).multv(this);
-	}
+	return { x: x
+		   , y: y
+		   }
 }
 
-export function R(theta) {
-	return new Matrix( Math.cos(theta), -Math.sin(theta), Math.sin(theta), Math.cos(theta) )
+export function vector_translate(vect,point) {
+	return Vector ( vect.x + point.x
+			      , vect.y + point.y
+			      )
+}
+
+export function vector_rotate(vect,theta) {
+	return mat2d_multv(mat2d_R(theta),vect)
 }

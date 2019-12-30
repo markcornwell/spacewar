@@ -6,59 +6,54 @@
 import { Ship, shipArray } from './ship.js'
 import { starRadius, massShip, massStar } from './parm.js'
 
-export function Star() {
-	this.x = window.innerWidth/2;
-	this.y = window.innerHeight/2;
+//export function Star() {
+//	this.x = window.innerWidth/2;
+//	this.y = window.innerHeight/2;
 
-	// star is a simple circle for now
-	this.draw_as_circle = function(c) {  // unused
-		c.beginPath();
-		c.arc(this.x,this.y,starRadius,0,2*Math.PI,false);
-        c.stroke();
-	}
-
-	this.draw = function(c) {
-		// draw star with a sparking effect
-		c.beginPath();
-		for (var i = 0; i < 6; i++) {
-			c.moveTo(this.x,this.y);
-			c.lineTo(this.x + (Math.random() - 0.5) * 2*starRadius, this.y + (Math.random() - 0.5) * 2*starRadius);
-		}
-        c.stroke();
-	}
-
-	this.update = function(c,shipArray) {
-
-		// look for any ships that may have fallen into the star and tell them to explode
-		//
-		for (var i  = 0; i < shipArray.length; i++) {
-	    	let distX = (shipArray[i].x - this.x);
-	    	let distY = (shipArray[i].y - this.y);
-	    	let distSquared = distX**2 + distY**2;
-			if (Math.sqrt(distSquared) < starRadius) {
-				console.log("star destroys ship");
-				shipArray[i].explode = true;
-				this.life = 0;
-			}
-		}
-
-	    // upate the forces on the ships  ( F = G * (m1 * m2)/(r**2) )
-	    //
-	    for (var i = 0; i < shipArray.length; i++) {
-	    	// the gravitational force is proportional to the sum of masses divided by the square of the distance
-	    	let distX = (shipArray[i].x - this.x);
-	    	let distY = (shipArray[i].y - this.y);
-	    	let distSquared = distX**2 + distY**2;
-	    	let gravForce = (massShip * massStar) / distSquared
-
-	    	// allcate the force into its x and y components
-	    	let sin = distY / Math.sqrt(distSquared);
-	    	let cos = distX / Math.sqrt(distSquared); 
-	    	shipArray[i].dx -= gravForce * cos;
-	    	shipArray[i].dy -= gravForce * sin;
-	    }
+export function Star(xx,yy,rr) {
+	return { x: xx, y: yy, radius: rr }
+}
 
 
-		this.draw(c);
+
+// returns a ship marking it to explode if too close to star
+export function star_destroys_ship(star,ship) {
+	let distX = ship.x - star.x;
+	let distY = ship.y - star.y;
+	let distSquared = distX**2 + distY**2;
+	if (Math.sqrt(distSquared) < star.radius) {
+		return Object.assign( {}, ship , { explode: true } )
+	} else {
+		return ship
 	}
 }
+
+// returnes a new ship array marking ships too close to the star as exploded
+export function star_update_ships(star,shipArray) {
+	return shipArray.map(ship => star_destroys_ship(star,ship));
+}
+
+export function start_update_force(star,ship) {
+	 // the gravitational force is proportional to the sum of masses divided by the square of the distance
+	 let distX = ship.x - star.x;
+	 let distY = ship.y - star.y;
+	 let distSquared = distX**2 + distY**2;
+	 let gravForce = (massShip * massStar) / distSquared;       // GLOBAL CONSTANT PARAMETERS  massShip and massStar
+
+	 // allcate the force into its x and y components
+	 let sin = distY / Math.sqrt(distSquared);
+	 let cos = distX / Math.sqrt(distSquared); 
+
+	 return Object.assign( {}, ship,
+	 	{ dx: ship.dx - gravForce * cos
+	 	, dy: ship.dy - gravForce * sin 
+	 	})
+}
+
+// upate the forces on the ships  ( F = G * (m1 * m2)/(r**2) }
+// returns new ship array with updated forces
+
+export function star_update_forces(star,shipArray) {
+	return shipArray.map(ship => star_update_force(star,ship))
+}
+

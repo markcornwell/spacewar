@@ -19,13 +19,12 @@
 //
 //-----------------------------------------------------------------------------------------------------------
 
-import { Matrix, Vector, R } from './mat2d.js'
+import { Vector } from './mat2d.js'
 import { lineLine, polyLine } from './collide.js'
 import { Shape } from './shape.js'
 import { Missile, missileArray } from './missile.js'
-//import { shipScale, missileLife, rotationDelta, burnForce, starEnable } from './parm.js'
-import { shipScale, starEnable } from './parm.js'
-import { Ship, shipArray, explodeShips } from './ship.js'
+import { shipScale, starEnable, serverHeight, serverWidth, starRadius } from './parm.js'
+import { Ship, explodeShips } from './ship.js'
 import { Star } from './star.js'
 
 
@@ -130,7 +129,6 @@ if (isTouchDevice){
 		  rightRot = document.querySelector('#right');
 
 		burnBtn.ontouchstart = function(){
-			//ship1.burn(burnForce);
 			ship1.burnOn = true;
 		};
 		burnBtn.ontouchend = function(){
@@ -138,7 +136,6 @@ if (isTouchDevice){
 		};
 
 		fireBtn.ontouchstart = function(){
-			//new Missile(ship1);
 			ship1.fire = true;
 		};
 		fireBtn.ontouchend = function(){
@@ -146,7 +143,6 @@ if (isTouchDevice){
 		};
 
 		leftRot.ontouchstart = function(){
-			//ship1.rotate(-rotationDelta);
 			ship1.rotateLeft = true;
 		};
 		leftRot.ontouchend = function(){
@@ -154,7 +150,6 @@ if (isTouchDevice){
 		};
 
 		rightRot.ontouchstart = function(){
-			//ship1.rotate(rotationDelta);
 			ship1.rotateRight = true;
 		};
 		rightRot.ontouchend = function(){
@@ -177,26 +172,26 @@ if (isTouchDevice){
 // SETUP --- Define the Shapes and Objects Here
 //-------------------------------------------------
 
-var Wedge = new Shape( 	[ new Vector(shipScale,0)
-				  		, new Vector(-shipScale, shipScale/4) 
-						, new Vector(-shipScale, -shipScale/4)  
-						]);
+const Wedge = Shape( [ Vector(shipScale,0)
+				     , Vector(-shipScale, shipScale/4) 
+				     , Vector(-shipScale, -shipScale/4)  
+				     ]);
 
-var WedgeFlame = new Shape( [ new Vector (-shipScale, 0)
-							, new Vector (-shipScale * 5/4, 0)
-							]);
-
-var radius = shipScale;
+const WedgeFlame = Shape( [ Vector (-shipScale, 0)
+						  , Vector (-shipScale * 5/4, 0)
+						  ]);
 
 
-var ship2 = new Ship(Wedge, WedgeFlame, canvas.width*(3/4), canvas.height*(1/2), 0 , -0.5, radius, -Math.PI/2);
-var ship1 = new Ship(Wedge, WedgeFlame, canvas.width*(1/4), canvas.height*(1/2), 0 ,  0.5, radius,  Math.PI/2);
+const radius = shipScale;
 
 
-shipArray.push(ship1);
-shipArray.push(ship2);
+var ship2 = Ship(Wedge, WedgeFlame, serverWidth*(3/4), serverHeight*(1/2), 0 , -0.5, radius, -Math.PI/2);
+var ship1 = Ship(Wedge, WedgeFlame, serverWidth*(1/4), serverHeight*(1/2), 0 ,  0.5, radius,  Math.PI/2);
 
-var star = new Star();  // new
+
+var shipArray = [ ship1, ship2 ];
+var star = Star(serverWidth/2, serverHeight/2, starRadius );  // new
+
 
 //-----------------------------------------
 // ANIMATE -- main animation loop

@@ -2,7 +2,7 @@
 //
 
 import { check } from './check.js'
-import { Star, star_destroys_ship } from './star.js'
+import { Star, star_destroys_ship } from '../star.js'
 
 check("10",0,0);
 check("12", Star(10,20,5).x, 10);

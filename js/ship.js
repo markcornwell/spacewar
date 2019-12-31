@@ -4,13 +4,10 @@
 // orientation described by an angle theta measured from the horizontal
 // in radians, e.g. Pi/2 points straight up. 
 
-import { Shape } from './shape.js'
+import { BURN_FORCE, ROTATION_DELTA } from './parm.js'
+import { Shape, shape_translate, shape_rotate } from './shape.js'
 import { Vector } from './mat2d.js'
-import { rotationDelta, burnForce } from './parm.js'
 import { Missile } from './missile.js'
-
-
-//export var shipArray = [];
 
 export function explodeShips() {
 	//shipArray = shipArray.filter(ship => (ship.explode == false));
@@ -21,7 +18,7 @@ export function explodeShips() {
 export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	return {
 		x: x,
-		y: y;
+		y: y,
 		dx: dx,
 		dy: dy,
 		radius: radius,
@@ -34,70 +31,62 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 		flame: flame,
 		explode: false,
 	}
+}
 
 // retruns the shape of the ship rotated and translated into its current position
 export function ship_shapeInPosition(ship) {
     	return shape_translate(shape_rotate(ship.shape,
     		                                ship.shape.theta),
-    						   vector(ship.x,ship.y))     
+    						   Vector(ship.x,ship.y))     
     }
 
-//------------ Drawing Functions use canvas
+// Rotate by adding some angle to theta.  Keeps theta normalized between
+// -2*PI and +2*PI.
 
-    this.draw = function(c) {
-    	this.shape.rotate(this.theta).translate(new Vector(this.x,this.y)).draw(c);
-    	if (this.burnOn) {
-    		this.flame.rotate(this.theta).translate(new Vector(this.x,this.y)).draw(c);
-    	}     
-    }
-
-
-	this.update = function(c) {
-
-		// handle control actions
-		if (this.burnOn) {
-			this.burn(burnForce);
-		}
-		if (this.rotateRight) {
-			this.rotate(-rotationDelta);
-		}
-		if (this.rotateLeft) {
-			this.rotate(rotationDelta);
-		}
-		if (this.fire) {
-			new Missile(this);
-			this.fire = false;
-		}
-
-		this.x += this.dx + window.innerWidth;   // stay in positive coordinates
-		this.y += this.dy + window.innerHeight;
-		this.x %= window.innerWidth;             // mod to wrap around screen
-		this.y %= window.innerHeight;
-
-		this.draw(c);                            // core redraw
-
-	}
-
-	// Rotate by adding some angle to theta.  Keeps theta normalized between
-	// -2*PI and +2*PI.
-
-	this.rotate = function(delta) {
-		//console.log("rotate");
-		this.theta = this.theta + delta;
-		if (this.theta > (2*Math.PI))  {
-			this.theta = this.theta - (2*Math.PI);
-		} else if (this.theta < -2*Math.PI) {
-			this.theta = this.theta + (2*Math.PI);
-		}
-	}
-
-	// Burn applies a force in the direction theta which will modify the dx,dy
-	// components of the velocity.
-
-	this.burn = function(force) {
-		console.log("Burn");
-	    this.dx = this.dx + force * Math.cos(this.theta);
-	    this.dy = this.dy + force * Math.sin(this.theta);
-	}
-
+function ship_rotate(ship,delta,ticks) {  // returns a new ship rotated by delta * ticks
+	assert ( 0 <= delta && delta < 2*Math.Pi);
+	let deltat = delta*ticks;
+	assert ( 0 < deltat && deltat < 2*Math.PI);
+	let theta = (ship.theta + deltat > 2*Math.Pi ? ship.theta + deltat - 2*Math.Pi : ship.theta + deltat)
+	return Object.assign( {}, ship, { theta: theta } )
 }
+
+// Burn applies a force in the direction theta which will modify the dx,dy
+// components of the velocity.
+
+function ship_burn(ship,force,ticks) {
+	console.log("Burn");
+	new_dx = ship.dx + force * ticks * Math.cos(ship.theta);
+	new_dy = ship.dy + force * ticks * Math.sin(ship.theta);
+	Object.assign({}, ship, { dx: new_dx, dy: new_dy });
+}
+
+function Control(burnOn,rotateRight,rotateLeft,fire) {
+	assert( tyepof(burnOn)==="Boolean");
+	return { burnOn: burnOn
+		   , rotateRight: rotateRight
+		   , rotateLeft: rotateLeft
+		   , fire: fire
+		   }
+}
+
+// returns a ship wtih controls set as given
+function ship_set_controls(ship,control) {
+	Object.assign( {}, ship, control )
+}
+
+// returns a ship updated the ship physics -- (need some time interval)
+// returns { missiles, ship }
+
+function ship_update(ship, ticks) {
+	let ship_1 = (ship.burnOn ? ship_burn(ship,force,ticks) : ship);
+	let ship_2 = (ship.rotateRight ? ship_rotate(ship_1, -rotationDelta) : ship_1);  
+    let ship_3 = (ship.rotateLeft  ? ship_rotate(ship_2, rotationDelta) : ship_2);
+    let ship_4 = Object.assign( {}, ship_3, { x: (ship.x + serverWidth) % serverWidth
+                                            , y: (ship.y + serverHeight) % serverHeight 
+                                            })
+    return { missile: (ship_4.fire ? Missile(ship_4) : null)
+           , ship: Object.assign( {}, ship_4, { fire: false })
+           }
+}
+

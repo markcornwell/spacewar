@@ -3,9 +3,13 @@
 // Function: Drawing functions for spacewar canvas
 //
 // Secrets: what libraries are used to draw on the display
-//
 
-// Ship
+// Note: These drawing functions will migrate over to the client.  Expect them to
+//       disappear sompletely from the server side.
+//
+// These functions are not pure functions.  They access a mutable canvas and they
+// make calls to random.
+//
 
 function star_draw_circle(star,c) {  // unused
 	let x = star.x;
@@ -36,21 +40,48 @@ function star_draw(star,c) {
 // Shape
 
 export function shape_draw(shape,c) {
-	let pointList = shape.pointList;
-	if (pointList.length == 0) {
+	let pl = shape.pointList;
+	if (pl.length == 0) {
 		console.log("Warning: Shape draw has empty pointList");
 		return c;
 	}
     c.beginPath();
 	c.strokeStyle = 'white';
-	c.moveTo(pointList[0].x,pointList[0].y)
+	c.moveTo(pl[0].x,pl[0].y)
 
-	for (var i = 1; i<pointList.length; i++) {
-		c.lineTo(pointList[i].x,pointList[i].y);
+	for (var i = 1; i<pl.length; i++) {
+		c.lineTo(pl[i].x,pl[i].y);
 	}
         
-    c.lineTo(pointList[0].x,pointList[0].y);
+    c.lineTo(pl[0].x,pl[0].y);
 	c.strokeStyle = 'white';
 	c.stroke();
 	return c;
 }
+
+// Ship
+
+export function ship_draw(ship,c) {
+    shape_draw( shape_translate( shape_rotate(ship.shape, ship.theta)
+    	                       , Vector(ship.x,ship.y
+    	                       )
+    	      ,c)
+
+    if (ship.burnOn) {
+    	shape_draw( sahpe_translate ( shape_rotate(ship.flame, theta), 
+    		                          Vector(ship.x,ship.y)
+    		                        )
+    	          ,c)
+    }
+    return c;
+}
+
+// Missile
+
+function missle_draw(missile,c) {
+	c.beginPath();
+	c.arc(missile.x,missile.y,2,0,2*Math.PI,false);
+    c.stroke();
+}
+
+

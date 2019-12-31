@@ -2,7 +2,7 @@
 //
 
 import { check } from './check.js'
-import { Matrix, mat2d_multm, Vector, mat2d_multv, mat2d_R, vector_translate, vector_rotate  } from './mat2d.js'
+import { Matrix, mat2d_multm, Vector, mat2d_multv, mat2d_R, vector_translate, vector_rotate  } from '../mat2d.js'
 
 check("10",0,0);
 

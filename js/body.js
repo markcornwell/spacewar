@@ -7,7 +7,11 @@ export function rotatable(body) { return body.theta != undefined }
 
 // (body,delta,dt) => body
 export function body_rotate(body,omega,dt) {  // omega is angular velocity
-	return Object.assign( {}, body, { theta: normalize_angle(body.theta + omega*dt) } );
+	if (rotatable(body)) {
+		return Object.assign( {}, body, { theta: normalize_angle(body.theta + omega*dt) } )
+	} else {
+		return body;
+	}
 }
 
 // normalize angle to the range [0, 2*PI]

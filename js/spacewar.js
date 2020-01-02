@@ -41,11 +41,12 @@
 import { lineLine, polyLine } from './collide.js'
 import { Shape } from './shape.js'
 import { Missile } from './missile.js'
-import { SHIP_SCALE, STAR_ENABLE, SERVER_HEIGHT, SERVER_WIDTH, STAR_RADIUS, WEDGE, WEDGE_FLAME } from './parm.js'
-import { Ship, explodeShips } from './ship.js'
+import { SHIP_SCALE, STAR_ENABLE, SERVER_HEIGHT, SERVER_WIDTH, STAR_RADIUS, WEDGE, WEDGE_FLAME, ROTATION_DELTA } from './parm.js'
+import { Ship, ship_burn } from './ship.js'
 import { Star, star_gravity } from './star.js'
 import { ship_draw, star_draw, draw_clear } from './draw.js'
-import { body_update_xy } from './body.js'
+import { body_update_xy, body_rotate } from './body.js'
+import { getControl } from './controls.js'
 
 
 const radius = SHIP_SCALE;
@@ -53,12 +54,17 @@ const radius = SHIP_SCALE;
 let ship2 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(3/4), SERVER_HEIGHT*(1/2), 0 , -0.05, radius, -Math.PI/2);
 let ship1 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(1/4), SERVER_HEIGHT*(1/2), 0 ,  0.05, radius,  Math.PI/2);
 
+// assign ships to control slots (ship i get control i-1)
+ship1.slot = 0;
+ship2.slot = 1;
+
 let star = Star(SERVER_WIDTH/2, SERVER_HEIGHT/2, STAR_RADIUS );  // new
 
 console.log(star);
 
 let space = { x: SERVER_WIDTH, y: SERVER_HEIGHT };   // note that space is in server coordinates -- correct later
 
+let control = getControl();
 
 // put all game bodies in one flat array.  Bodies will have a tag to make further distinctions as necessary.
 	
@@ -80,8 +86,6 @@ function draw(body) {
 function animate() {
 	requestAnimationFrame(animate);
 
-
-
 // outline of main animatin loop ( Play mode )
 //
 // Destruction 
@@ -93,14 +97,26 @@ function animate() {
 // * destroy any missiles colliding with missile
 //
 // Controls
-// * read and record the control states
 
+// * read and record the control states
+	let ships = everybody.filter(body => body.tag == "ship"); 
+
+    
 // * pick a time dt to apply the control
 	let dt = 1000/60;
 
 // * apply any rotations implied by control
+
+    console.log(control[0]);
+
+    const rotateR = body => (body.tag == "ship" && (control[body.slot].rotateRight && body_rotate(body,-ROTATION_DELTA,dt)) || body);
+    const rotateL = body => (body.tag == "ship" && (control[body.slot].rotateLeft && body_rotate(body,  ROTATION_DELTA,dt)) || body);
+    everybody = everybody.map(rotateR);
+    everybody = everybody.map(rotateL);
+
 // * apply any forces implied by the control
-//
+    everybody = everybody.map(body => (body.tag == "ship" && (control[body.slot].burnOn && ship_burn(body,dt))  || body));
+
 //  Gravity
 // * apply any forces implied by the sun
 	everybody = everybody.map(body => star_gravity(star,body,dt));
@@ -121,8 +137,6 @@ function animate() {
 
 	//c.clearRect(0,0,innerWidth,innerHeight);
 
-
-	
 
 	/**********************************
     // OLD CHEESE

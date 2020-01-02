@@ -23,45 +23,52 @@
 // may be either a human or the local AI.
 //----------------------------------------------------------------
 
-
+/*
 function Control() {
 	return { rotateLeft: false, rotateRight: false, burnOn: false, fire: false } 
 }
 
 export var control = [ Control(), Control() ];
- 
+*/
+export function getControl() {
+	return [ control1, control2 ]
+}
+
+let control1 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false };
+let control2 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false };
+
 
 document.addEventListener('keydown', commandKeyDown);
 document.addEventListener('keyup', commandKeyUp);
 
 function commandKeyDown(e) {
-	console.log(e);
+	//console.log(e);
 
 	// Cleaned up confusing if/else chain with a switch statement
 	switch(e.code){
 		case "KeyA":
-			control[0].rotateLeft = true;
+			control1.rotateLeft = true;
 			break;
 		case "KeyD":
-			control[0].rotateRight = true;
+			control1.rotateRight = true;
 			break;
 		case "KeyS":
-			contol[0].burnOn = true;
+			control1.burnOn = true;
 			break;
 		case "KeyW":
-			control[0].fire = true;
+			control1.fire = true;
 			break;
 		case "KeyJ":
-			control[1].rotateLeft = true;
+			control2.rotateLeft = true;
 			break;
 		case "KeyL":
-			control[1].rotateRight = true;
+			control2.rotateRight = true;
 			break;
 		case "KeyK":
-			control[1].burnOn = true;
+			control2.burnOn = true;
 			break;
 		case "KeyI":
-			control[1].fire = true;
+			control2.fire = true;
 			break;
 	}
 }
@@ -70,28 +77,28 @@ function commandKeyDown(e) {
 function commandKeyUp(e) {
 	switch(e.code){
 		case "KeyA":
-			control[0].rotateLeft = false;
+			control1.rotateLeft = false;
 			break;
 		case "KeyD":
-			control[0].rotateRight = false;
+			control1.rotateRight = false;
 			break;
 		case "KeyS":
-			control[0].burnOn = false;
+			control1.burnOn = false;
 			break;
 		case "KeyW":
-			control[0].fire = false;
+			control1.fire = false;
 			break;
 		case "KeyJ":
-			control[1].rotateLeft = false;
+			control2.rotateLeft = false;
 			break;
 		case "KeyL":
-			control[1].rotateRight = false;
+			control2.rotateRight = false;
 			break;
 		case "KeyK":
-			control[1].burnOn = false;
+			control2.burnOn = false;
 			break;
 		case "KeyI":
-			control[1].fire = false;
+			control2.fire = false;
 			break;
 	}
 }

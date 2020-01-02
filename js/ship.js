@@ -66,27 +66,29 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 // make this generic to rotate any body with an orientation theta.  Put in body.js
 
 // replace all calls to object specific ship rotate with the generic body_rotate
-function ship_rotate(ship,delta,dt) {  // returns a new ship rotated by delta * ticks
-	let new_theta = normalize(ship.theta + delta*dt);
+function ship_rotate(ship,omega,dt) {  // returns a new ship rotated by delta * ticks
+	console.log("ship_rotate",ship,omega,dt);
+	let new_theta = normalize_angle(ship.theta + omega*dt);
 	return Object.assign( {}, ship, { theta: new_theta } );
 }
 
 function normalize_angle(delta) {
-	if (delta < 0) return normalize(delta + 2*Math.Pi);
-	if (delta > 2*Math.PI) return normalize(delta - 2*Math.Pi);
+	if (delta < 0) { return normalize_angle(delta + 2*Math.PI) }
+	if (delta > 2*Math.PI) { return normalize_angle(delta - 2*Math.PI) }
 	return delta;
 }
 
 // Burn applies a force in the direction theta which will modify the dx,dy
 // components of the velocity.
 
-function ship_burn(ship,force,ticks) {
+export function ship_burn(ship,dt) {
 	console.log("Burn");
-	new_dx = ship.dx + force * ticks * Math.cos(ship.theta);
-	new_dy = ship.dy + force * ticks * Math.sin(ship.theta);
-	Object.assign({}, ship, { dx: new_dx, dy: new_dy });
+	let new_dx = ship.dx + BURN_FORCE * dt * Math.cos(ship.theta);
+	let new_dy = ship.dy + BURN_FORCE * dt * Math.sin(ship.theta);
+	Object.assign({}, ship, { dx: new_dx, dy: new_dy, burnOn: true });
 }
 
+/*
 function Control(burnOn,rotateRight,rotateLeft,fire) {
 	assert( tyepof(burnOn)==="Boolean");
 	return { burnOn: burnOn
@@ -95,15 +97,18 @@ function Control(burnOn,rotateRight,rotateLeft,fire) {
 		   , fire: fire
 		   }
 }
+*/
 
+/*
 // returns a ship wtih controls set as given
 function ship_set_controls(ship,control) {
 	Object.assign( {}, ship, control )
 }
-
+*/
 // returns a ship updated the ship physics -- (need some time interval)
 // returns { missiles, ship }
 
+/*
 function ship_update(ship, ticks) {
 	let ship_1 = (ship.burnOn ? ship_burn(ship,force,ticks) : ship);
 	let ship_2 = (ship.rotateRight ? ship_rotate(ship_1, -rotationDelta) : ship_1);  
@@ -115,4 +120,4 @@ function ship_update(ship, ticks) {
            , ship: Object.assign( {}, ship_4, { fire: false })
            }
 }
-
+*/

@@ -44,6 +44,7 @@ export function draw_circle(body) {  // works on any body with a radius
 
 export function star_draw(body) {
 	// draw star with a sparking effect
+	//console.log("star_draw",body);
 	c.beginPath();
 	for (var i = 0; i < 6; i++) {			
 		c.moveTo(body.x,body.y);

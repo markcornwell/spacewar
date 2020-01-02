@@ -43,8 +43,8 @@ import { Shape } from './shape.js'
 import { Missile } from './missile.js'
 import { SHIP_SCALE, STAR_ENABLE, SERVER_HEIGHT, SERVER_WIDTH, STAR_RADIUS, WEDGE, WEDGE_FLAME } from './parm.js'
 import { Ship, explodeShips } from './ship.js'
-import { Star } from './star.js'
-import { ship_draw, draw_clear } from './draw.js'
+import { Star, star_gravity } from './star.js'
+import { ship_draw, star_draw, draw_clear } from './draw.js'
 import { body_update_xy } from './body.js'
 
 
@@ -55,17 +55,21 @@ let ship1 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(1/4), SERVER_HEIGHT*(1/2), 0 
 
 let star = Star(SERVER_WIDTH/2, SERVER_HEIGHT/2, STAR_RADIUS );  // new
 
+console.log(star);
+
 let space = { x: SERVER_WIDTH, y: SERVER_HEIGHT };   // note that space is in server coordinates -- correct later
 
 
 // put all game bodies in one flat array.  Bodies will have a tag to make further distinctions as necessary.
 	
-let everybody = [ship1, ship2];
+let everybody = [ship1, ship2, star];
+
+console.log(everybody);
 
 function draw(body) {
 	switch(body.tag) {
-		case "ship" : ship_draw(body);
-				      break;
+		case "ship" : ship_draw(body);  break;
+	    case "star" : star_draw(body);  break;
 	}
 }
 
@@ -75,6 +79,8 @@ function draw(body) {
 
 function animate() {
 	requestAnimationFrame(animate);
+
+
 
 // outline of main animatin loop ( Play mode )
 //
@@ -88,17 +94,19 @@ function animate() {
 //
 // Controls
 // * read and record the control states
+
 // * pick a time dt to apply the control
+	let dt = 1000/60;
+
 // * apply any rotations implied by control
 // * apply any forces implied by the control
 //
 //  Gravity
 // * apply any forces implied by the sun
+	everybody = everybody.map(body => star_gravity(star,body,dt));
 //
 // Motions
 // * update xy for all bodies
-
-	let dt = 1000/60;
 	everybody = everybody.map(body => body_update_xy(body,space,dt));
 
 // Display

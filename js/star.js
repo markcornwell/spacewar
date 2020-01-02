@@ -11,7 +11,7 @@ import { STAR_RADIUS, MASS_SHIP, MASS_STAR } from './parm.js'
 //	this.y = window.innerHeight/2;
 
 export function Star(xx,yy,rr) {
-	return { x: xx, y: yy, radius: rr }
+	return { tag: "star", x: xx, y: yy, radius: rr, dx: 0, dy: 0}
 }
 
 // REFACTORY: not necessarily a ship, a star will destroy any object that
@@ -40,20 +40,28 @@ export function star_update_ships(star,shipArray) {
 	return shipArray.map(ship => star_destroys_ship(star,ship));
 }
 
-export function start_update_force(star,ship) {
+export function star_gravity(star,body,dt) {
+	if (body.tag == "ship") {
+		return star_update_force(star,body,dt);
+	} else {
+		return body;
+	}
+}
+
+function star_update_force(star,ship,dt) {
 	 // the gravitational force is proportional to the sum of masses divided by the square of the distance
 	 let distX = ship.x - star.x;
 	 let distY = ship.y - star.y;
 	 let distSquared = distX**2 + distY**2;
-	 let gravForce = (massShip * massStar) / distSquared;       // GLOBAL CONSTANT PARAMETERS  massShip and massStar
+	 let gravForce = (MASS_SHIP * MASS_STAR) / distSquared;       // GLOBAL CONSTANT PARAMETERS  massShip and massStar
 
 	 // allcate the force into its x and y components
 	 let sin = distY / Math.sqrt(distSquared);
 	 let cos = distX / Math.sqrt(distSquared); 
 
 	 return Object.assign( {}, ship,
-	 	{ dx: ship.dx - gravForce * cos
-	 	, dy: ship.dy - gravForce * sin 
+	 	{ dx: ship.dx - gravForce * dt * cos
+	 	, dy: ship.dy - gravForce * dt * sin 
 	 	})
 }
 

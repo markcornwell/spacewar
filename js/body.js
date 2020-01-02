@@ -32,5 +32,3 @@ export function body_update_dxdy(body,force,dt) {
 		dx: body.dx * force.x * dt,
 		dy: body.dy = force.y * dt
 	})}
-
-

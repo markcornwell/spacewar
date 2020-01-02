@@ -5,60 +5,120 @@
 //
 // Ref: https://en.wikipedia.org/wiki/Spacewar!
 //
-// This is my interpretation of the classic game "Spacewar!" originally developed for the DEC PDP-1
-// in 1962 by Steve Russell in collaboration with Martin Gretz and Wayne Wiitanen.  It holds a special
-// place personally for me.  I first read about Spacewar! from an article in my Dad's copy of
-// Analog, the science fiction magazine, sometime in the 60's. Then in the 70's while still in High School,
-// I visited North Carolina State's EE Department on a college visit.  They had a demo os Spacewar running
-// on one of their computers.  That would have been about 1973 or 1974.  It was great!  I had a joystick to
-// control the pitch of the ship and a foot button to control thrust.  I think there was a fire button.
-// It was magical.  Later in grad school, home for Christams vacation in 1979, I implemented a version 
-// of Spaceware in Basic on a Commodor 64.  It worked, and I saved it off on a cassette tape.  So, this is
-// my first attempt at spacewar since Chirstmas vacation, 1979 -- 40 years give or take a couple of weeks.
-// Long overdue!
+//
+// outline of main animatin loop ( Play mode )
+//
+// Destruction 
+// * destroy any bodies colliding with sun
+// * destroy any ships colliding with another ship
+// * destroy any ships colliding with missile
+// * destroy any missiles with no life
+// * destroy any missiles colliding with ship
+// * destroy any missiles colliding with missile
+//
+// Controls
+// * read and record the control states
+// * pick a time dt to apply the control
+// * apply any rotations implied by control
+// * apply any forces implied by the control
+//
+//  Gravity
+// * apply any forces implied by the sun
+//
+// Motions
+// * update xy for all bodies
+// Display
+// * update the display from the current position/rotation of all existing bodies
+//
+// Note: 
+// * collisions create explosion animations managed on client side
+// * sparkling sun animation managed on client side
+// * potential for different client side skins
 //
 //-----------------------------------------------------------------------------------------------------------
 
-import { Vector } from './mat2d.js'
+//import { Vector } from './mat2d.js'
 import { lineLine, polyLine } from './collide.js'
 import { Shape } from './shape.js'
-import { Missile, missileArray } from './missile.js'
-import { shipScale, starEnable, serverHeight, serverWidth, starRadius } from './parm.js'
+import { Missile } from './missile.js'
+import { SHIP_SCALE, STAR_ENABLE, SERVER_HEIGHT, SERVER_WIDTH, STAR_RADIUS, WEDGE, WEDGE_FLAME } from './parm.js'
 import { Ship, explodeShips } from './ship.js'
 import { Star } from './star.js'
-
-//-------------------------------------------------
-// SETUP --- Define the Shapes and Objects Here
-//-------------------------------------------------
-
-const Wedge = Shape( [ Vector(shipScale,0)
-				     , Vector(-shipScale, shipScale/4) 
-				     , Vector(-shipScale, -shipScale/4)  
-				     ]);
-
-const WedgeFlame = Shape( [ Vector (-shipScale, 0)
-						  , Vector (-shipScale * 5/4, 0)
-						  ]);
-
-const radius = shipScale;
+import { ship_draw, draw_clear } from './draw.js'
+import { body_update_xy } from './body.js'
 
 
-var ship2 = Ship(Wedge, WedgeFlame, serverWidth*(3/4), serverHeight*(1/2), 0 , -0.5, radius, -Math.PI/2);
-var ship1 = Ship(Wedge, WedgeFlame, serverWidth*(1/4), serverHeight*(1/2), 0 ,  0.5, radius,  Math.PI/2);
+const radius = SHIP_SCALE;
+
+let ship2 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(3/4), SERVER_HEIGHT*(1/2), 0 , -0.05, radius, -Math.PI/2);
+let ship1 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(1/4), SERVER_HEIGHT*(1/2), 0 ,  0.05, radius,  Math.PI/2);
+
+let star = Star(SERVER_WIDTH/2, SERVER_HEIGHT/2, STAR_RADIUS );  // new
+
+let space = { x: SERVER_WIDTH, y: SERVER_HEIGHT };   // note that space is in server coordinates -- correct later
 
 
-var shipArray = [ ship1, ship2 ];
-var star = Star(serverWidth/2, serverHeight/2, starRadius );  // new
+// put all game bodies in one flat array.  Bodies will have a tag to make further distinctions as necessary.
+	
+let everybody = [ship1, ship2];
+
+function draw(body) {
+	switch(body.tag) {
+		case "ship" : ship_draw(body);
+				      break;
+	}
+}
 
 //-----------------------------------------
 // ANIMATE -- main animation loop
 //-----------------------------------------
 
-export function animate() {
+function animate() {
 	requestAnimationFrame(animate);
 
-	c.clearRect(0,0,innerWidth,innerHeight);
+// outline of main animatin loop ( Play mode )
+//
+// Destruction 
+// * destroy any bodies colliding with sun
+// * destroy any ships colliding with another ship
+// * destroy any ships colliding with missile
+// * destroy any missiles with no life
+// * destroy any missiles colliding with ship
+// * destroy any missiles colliding with missile
+//
+// Controls
+// * read and record the control states
+// * pick a time dt to apply the control
+// * apply any rotations implied by control
+// * apply any forces implied by the control
+//
+//  Gravity
+// * apply any forces implied by the sun
+//
+// Motions
+// * update xy for all bodies
+
+	let dt = 1000/60;
+	everybody = everybody.map(body => body_update_xy(body,space,dt));
+
+// Display
+// * update the display from the current position/rotation of all existing bodies
+    draw_clear();
+	everybody.map(draw);
+
+// Note: 
+// * collisions create explosion animations managed on client side
+// * sparkling sun animation managed on client side
+// * potential for different client side skins
+
+	//c.clearRect(0,0,innerWidth,innerHeight);
+
+
 	
+
+	/**********************************
+    // OLD CHEESE
+    //
 	// Update Star - assign gravitational forces to ships
 	if (starEnable) {
 		star.update(c,shipArray);
@@ -82,6 +142,7 @@ export function animate() {
 
 	// remove any exploded ships 
 	explodeShips();
+	*************************************/
 }
 
 animate();

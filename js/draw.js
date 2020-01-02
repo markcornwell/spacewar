@@ -17,11 +17,20 @@
 
 // Initialize the canvas context
 
+import { shape_translate, shape_rotate } from './shape.js'
+
 var canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var c = canvas.getContext('2d');
 c.strokeStyle = 'white';
+
+	//c.clearRect(0,0,innerWidth,innerHeight);
+
+export function draw_clear() {
+	//c.clearRect(0,0,space.x,space.y);
+	c.clearRect(0,0,canvas.width,canvas.height);
+}
 
 export function draw_circle(body) {  // works on any body with a radius
 	c.beginPath();
@@ -33,7 +42,7 @@ export function draw_circle(body) {  // works on any body with a radius
 
 // Star - note no translations or rotations
 
-function star_draw(body) {
+export function star_draw(body) {
 	// draw star with a sparking effect
 	c.beginPath();
 	for (var i = 0; i < 6; i++) {			
@@ -77,19 +86,19 @@ export function shape_draw(shape) {
 // draws the burn if it is indicated.
 //
 
-
 export function ship_draw(ship) {
-    shape_draw( shape_translate( shape_rotate(ship.shape, ship.theta).
-    	                         Vector(ship.x,ship.y)),
-    	        c);
+	if (ship.tag != 'ship') { 
+		return null 
+	} else {
+    	shape_draw(shape_translate(shape_rotate(ship.shape, ship.theta)
+    	                          , { x: ship.x, y: ship.y }
+    	                          ));
 
-    if (ship.burnOn) {
-    	shape_draw( shape_translate ( shape_rotate(ship.flame, theta), 
-    		                          Vector(ship.x,ship.y)
-    		                        )
-    	          ,c)
-    }
-}
+    	if (ship.burnOn) {
+    		shape_draw( shape_translate ( shape_rotate(ship.flame, theta), 
+    		                                           {x: ship.x, y: ship.y}))
+    	}
+    }}
 
 // Missile -- unlike ship, missile does no translations or rotations
 // note that a missile is a simple body

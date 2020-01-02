@@ -36,6 +36,7 @@ export function explodeShips() {
 
 export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	return {
+		tag: "ship",
 		x: x,
 		y: y,
 		dx: dx,

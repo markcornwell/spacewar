@@ -11,77 +11,92 @@
 // make calls to random.
 //
 
-function star_draw_circle(star,c) {  // unused
-	let x = star.x;
-	let y = star.y;
-	let r = star.radius;	
+// Refactoring.  Now that drawing functions are together, no one else needs
+// to know about the canvas, so I can remove it from the parameter list.
+// Allow functions to access the canvas implicitly
+
+// Initialize the canvas context
+
+var canvas = document.querySelector('canvas');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var c = canvas.getContext('2d');
+c.strokeStyle = 'white';
+
+export function draw_circle(body) {  // works on any body with a radius
 	c.beginPath();
-	c.arc(x,y,r,0,2*Math.PI,false);
+	console.log("setting strokestyle to white");
+    //c.strokeStyle = "white";	
+    c.arc(body.x,body.y,body.radius,0,2*Math.PI,false);
     c.stroke();
-    return c;
 }
 
-// Star
+// Star - note no translations or rotations
 
-function star_draw(star,c) {
+function star_draw(body) {
 	// draw star with a sparking effect
-	let x = star.x;
-	let y = star.y;
-	let r = star.radius;
 	c.beginPath();
 	for (var i = 0; i < 6; i++) {			
-		c.moveTo(x,y);
-		c.lineTo(x + (Math.random() - 0.5) * 2*r, y + (Math.random() - 0.5) * 2*r);
+		c.moveTo(body.x,body.y);
+		c.lineTo(body.x + (Math.random() - 0.5) * 2*body.radius,
+			     body.y + (Math.random() - 0.5) * 2*body.radius);
 	}
 	c.stroke();
-	return c;
 }
 
-// Shape
+// Shape - actually draws a polygon from pointList
+// a shape is anything with a pointlist property
+// Important to note that shape draw does no rotations or 
+// translations on the shape.
 
-export function shape_draw(shape,c) {
+// I think polygon is a better name.  Reserve the term shape
+// for something more general.
+
+export const draw_polygon = shape_draw;
+
+export function shape_draw(shape) {
 	let pl = shape.pointList;
 	if (pl.length == 0) {
 		console.log("Warning: Shape draw has empty pointList");
-		return c;
 	}
     c.beginPath();
-	c.strokeStyle = 'white';
 	c.moveTo(pl[0].x,pl[0].y)
 
 	for (var i = 1; i<pl.length; i++) {
 		c.lineTo(pl[i].x,pl[i].y);
 	}
-        
+
     c.lineTo(pl[0].x,pl[0].y);
-	c.strokeStyle = 'white';
 	c.stroke();
-	return c;
 }
 
 // Ship
+//
+// Key thing here is that the function is doing the needed translations
+// and rotations on the raw shape before drawing it.  It also conditionally
+// draws the burn if it is indicated.
+//
 
-export function ship_draw(ship,c) {
-    shape_draw( shape_translate( shape_rotate(ship.shape, ship.theta)
-    	                       , Vector(ship.x,ship.y
-    	                       )
-    	      ,c)
+
+export function ship_draw(ship) {
+    shape_draw( shape_translate( shape_rotate(ship.shape, ship.theta).
+    	                         Vector(ship.x,ship.y)),
+    	        c);
 
     if (ship.burnOn) {
-    	shape_draw( sahpe_translate ( shape_rotate(ship.flame, theta), 
+    	shape_draw( shape_translate ( shape_rotate(ship.flame, theta), 
     		                          Vector(ship.x,ship.y)
     		                        )
     	          ,c)
     }
-    return c;
 }
 
-// Missile
+// Missile -- unlike ship, missile does no translations or rotations
+// note that a missile is a simple body
 
-function missle_draw(missile,c) {
+function missle_draw(missile) {
 	c.beginPath();
 	c.arc(missile.x,missile.y,2,0,2*Math.PI,false);
     c.stroke();
 }
-
 

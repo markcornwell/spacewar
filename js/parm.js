@@ -15,3 +15,21 @@ export const SERVER_WIDTH = 800;              // standard display height in serv
 export const SERVER_HEIGHT = 600;             // standard display width in seerver coordinates
 
 // default shapes for ships
+
+let D = SHIP_SCALE;
+
+function p(x,y) { return {x: x, y:y } }
+
+export const WEDGE = {pointList: [ { x: D,  y: 0 },
+				            { x: -D, y: D/4 }, 
+				            { x: -D, y: -D/4 } 
+				          ]};
+
+//console.log("Wedge: ", WEDGE);
+
+export const WEDGE_FLAME = {pointList: [ { x: -D, y: 0 }
+						        , { x: -D * 5/4, y: 0 }
+						        ]};
+
+
+

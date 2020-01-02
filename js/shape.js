@@ -8,16 +8,18 @@
 // For any given rotation and translation, a shape will have
 // a bounding box.
 
-import { Vector, mat2d_R } from './mat2d.js'
+import { mat2d_multv, vector_translate, vector_rotate } from './mat2d.js'
 
+// shape is doing nothing but wrapping a pointList property around something
+// why not just let it be a pointlist?
 export function Shape(pointList) {
 	return { pointList: pointList }
 }
 
 export function shape_rotate(shape,theta) {
-	return Object.assign( {}, pointList, shape.pointList.map(p => mat2d_multv(mat2d_R(theta),p)))
+	return Object.assign( {}, { pointList: shape.pointList.map(p => vector_rotate(p,theta)) })
 }
 
 export function shape_translate(shape,v) {
-	return Object.assign( {} , pointList, shape.pointList.map(p => vector_translate(v,p)))
+	return Object.assign( {} , { pointList: shape.pointList.map(p => vector_translate(v,p)) })
 }

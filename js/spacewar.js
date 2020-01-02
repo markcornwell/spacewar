@@ -27,147 +27,6 @@ import { shipScale, starEnable, serverHeight, serverWidth, starRadius } from './
 import { Ship, explodeShips } from './ship.js'
 import { Star } from './star.js'
 
-
-// Initialize the canvas context
-
-var canvas = document.querySelector('canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-var c = canvas.getContext('2d');
-
-// --------------------------------------------------
-// Keybord Commands and Controls
-//
-// We want the burn as long as the key is pressed
-// and end when the player releases the key.
-//--------------------------------------------------
-
-document.addEventListener('keydown', commandKeyDown);
-document.addEventListener('keyup', commandKeyUp);
-
-function commandKeyDown(e) {
-	console.log(e);
-
-	// Cleaned up confusing if/else chain with a switch statement
-	switch(e.code){
-		case "KeyA":
-			ship1.rotateLeft = true;
-			break;
-		case "KeyD":
-			ship1.rotateRight = true;
-			break;
-		case "KeyS":
-			ship1.burnOn = true;
-			break;
-		case "KeyW":
-			ship1.fire = true;
-			break;
-		case "KeyJ":
-			ship2.rotateLeft = true;
-			break;
-		case "KeyL":
-			ship2.rotateRight = true;
-			break;
-		case "KeyK":
-			ship2.burnOn = true;
-			break;
-		case "KeyI":
-			ship2.fire = true;
-			break;
-	}
-}
-
-
-function commandKeyUp(e) {
-	switch(e.code){
-		case "KeyA":
-			ship1.rotateLeft = false;
-			break;
-		case "KeyD":
-			ship1.rotateRight = false;
-			break;
-		case "KeyS":
-			ship1.burnOn = false;
-			break;
-		case "KeyW":
-			ship1.fire = false;
-			break;
-		case "KeyJ":
-			ship2.rotateLeft = false;
-			break;
-		case "KeyL":
-			ship2.rotateRight = false;
-			break;
-		case "KeyK":
-			ship2.burnOn = false;
-			break;
-		case "KeyI":
-			ship2.fire = false;
-			break;
-	}
-}
-
-
-// ------------------------------------------------
-// MOBILE CONTROLS
-// Written by Jeff Puls 12/22/2019
-// ------------------------------------------------
-
-// Detect if screen is touch-enabled (will return true for any touch screen device, not just iOS/Android)
-const 	isTouchDevice = 'ontouchstart' in document.documentElement,
-		btnsToggle = document.querySelector('#touch-toggle'),
-		mobileControls = document.querySelector('#mobile-controls');
-
-// If device is touch enabled, display the touch controls and add listeners
-if (isTouchDevice){
-	mobileControls.style.display = "initial";
-	btnsToggle.style.display = "initial";
-
-	const burnBtn = document.querySelector('#accel'),
-		  fireBtn = document.querySelector('#fire'),
-		  leftRot = document.querySelector('#left'),
-		  rightRot = document.querySelector('#right');
-
-		burnBtn.ontouchstart = function(){
-			ship1.burnOn = true;
-		};
-		burnBtn.ontouchend = function(){
-			ship1.burnOn = false;
-		};
-
-		fireBtn.ontouchstart = function(){
-			ship1.fire = true;
-		};
-		fireBtn.ontouchend = function(){
-			ship1.fire = false;
-		};
-
-		leftRot.ontouchstart = function(){
-			ship1.rotateLeft = true;
-		};
-		leftRot.ontouchend = function(){
-			ship1.rotateLeft = false;
-		};
-
-		rightRot.ontouchstart = function(){
-			ship1.rotateRight = true;
-		};
-		rightRot.ontouchend = function(){
-			ship1.rotateRight = false;
-		};
-
-		// Enable toggling of touch controls (for touchscreen laptops, external keyboards/gamepads, etc)
-		btnsToggle.ontouchstart = function(){
-			if (mobileControls.style.display != "none"){
-				mobileControls.style.display = "none";
-				this.style.opacity = ".1"
-			} else {
-				mobileControls.style.display = "initial";
-				this.style.opacity = ".5"
-			}
-		}
-}
-
 //-------------------------------------------------
 // SETUP --- Define the Shapes and Objects Here
 //-------------------------------------------------
@@ -181,7 +40,6 @@ const WedgeFlame = Shape( [ Vector (-shipScale, 0)
 						  , Vector (-shipScale * 5/4, 0)
 						  ]);
 
-
 const radius = shipScale;
 
 
@@ -191,7 +49,6 @@ var ship1 = Ship(Wedge, WedgeFlame, serverWidth*(1/4), serverHeight*(1/2), 0 ,  
 
 var shipArray = [ ship1, ship2 ];
 var star = Star(serverWidth/2, serverHeight/2, starRadius );  // new
-
 
 //-----------------------------------------
 // ANIMATE -- main animation loop

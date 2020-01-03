@@ -14,32 +14,6 @@ export function Star(xx,yy,rr) {
 	return { tag: "star", x: xx, y: yy, radius: rr, dx: 0, dy: 0}
 }
 
-// REFACTORY: not necessarily a ship, a star will destroy any object that
-// is too close.  May move this out to main loop, be less OO.
-// May want to mark missiles to explode when get to close.  So we
-// can genericise ship to any body.  Now bodies can explode.
-
-
-// Returns a ship marking it to explode if too close to star
-// note it cares not about the shape, but about the dx,dy to the
-// body.  Gave the right effect in my playtesting.  Should
-// reuse the distance functions defined on body.
-export function star_destroys_ship(star,ship) {
-	let distX = ship.x - star.x;
-	let distY = ship.y - star.y;
-	let distSquared = distX**2 + distY**2;
-	if (Math.sqrt(distSquared) < star.radius) {
-		return Object.assign( {}, ship , { explode: true } )
-	} else {
-		return ship
-	}
-}
-
-// returnes a new ship array marking ships too close to the star as exploded
-export function star_update_ships(star,shipArray) {
-	return shipArray.map(ship => star_destroys_ship(star,ship));
-}
-
 export function star_gravity(star,body,dt) {
 	if (body.tag == "ship") {
 		return star_update_force(star,body,dt);
@@ -64,13 +38,3 @@ function star_update_force(star,ship,dt) {
 	 	, dy: ship.dy - gravForce * dt * sin 
 	 	})
 }
-
-// upate the forces on the ships  ( F = G * (m1 * m2)/(r**2) }
-// returns new ship array with updated forces
-
-// Update Star forces is beign moved out to the main loop imperative part
-
-//export function star_update_forces(star,shipArray) {
-//	return shipArray.map(ship => star_update_force(star,ship))
-//}
-

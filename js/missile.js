@@ -11,6 +11,7 @@ import { polyLine } from './collide.js';
 // constructs a new Missile fired from the front of the given ship
 export function Missile(ship) {
 	return {
+		tag: "missile",
 		x: ship.x + SHIP_SCALE * 1.5 * Math.cos(ship.theta),
 		y: ship.y + SHIP_SCALE * 1.5 * Math.sin(ship.theta),
 		dx: ship.dx + MISSILE_SPEED * Math.cos(ship.theta),
@@ -24,6 +25,7 @@ export function Missile(ship) {
 // Idea is to percolate information out via the return value for
 // the caller to pick up and process.
 
+/*
 export function missile_update(missile,dt,shipArray) {  // => { missile: <missile>, hit: <ship> }
 
 	// look for any ships missile might have hit
@@ -45,6 +47,7 @@ export function missile_update(missile,dt,shipArray) {  // => { missile: <missil
 
 	return { missile: new_missile, hit: victim }
 }
+*/
 
 // returns the ship hit by missile, marked to explode, or null if ship not hit
 //

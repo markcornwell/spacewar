@@ -34,8 +34,8 @@ export function getControl() {
 	return [ control1, control2 ]
 }
 
-let control1 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false };
-let control2 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false };
+let control1 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false, fireEnable: true };
+let control2 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false, fireEnable: true };
 
 
 document.addEventListener('keydown', commandKeyDown);
@@ -56,7 +56,7 @@ function commandKeyDown(e) {
 			control1.burnOn = true;
 			break;
 		case "KeyW":
-			control1.fire = true;
+		    control1.fire = true;
 			break;
 		case "KeyJ":
 			control2.rotateLeft = true;

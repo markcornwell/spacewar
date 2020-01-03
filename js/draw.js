@@ -94,9 +94,8 @@ export function ship_draw(ship) {
     	shape_draw(shape_translate(shape_rotate(ship.shape, ship.theta)
     	                          , { x: ship.x, y: ship.y }
     	                          ));
-
     	if (ship.burnOn) {
-    		shape_draw( shape_translate ( shape_rotate(ship.flame, theta), 
+    		shape_draw( shape_translate ( shape_rotate(ship.flame, ship.theta), 
     		                                           {x: ship.x, y: ship.y}))
     	}
     }}
@@ -104,7 +103,7 @@ export function ship_draw(ship) {
 // Missile -- unlike ship, missile does no translations or rotations
 // note that a missile is a simple body
 
-function missle_draw(missile) {
+export function missile_draw(missile) {
 	c.beginPath();
 	c.arc(missile.x,missile.y,2,0,2*Math.PI,false);
     c.stroke();

@@ -36,3 +36,12 @@ export function body_update_dxdy(body,force,dt) {
 		dx: body.dx * force.x * dt,
 		dy: body.dy = force.y * dt
 	})}
+
+export function body_distance_squared(body1, body2) {
+	return (body1.x - body2.x)**2 + (body1.y - body2.y)**2
+}
+
+export function body_distance(body1, body2) {
+	return Math.sqrt(body_distance_squared(body1,body2))
+}
+

@@ -5,7 +5,6 @@
 //
 // Ref: https://en.wikipedia.org/wiki/Spacewar!
 //
-//
 // outline of main animatin loop ( Play mode )
 //
 // Destruction 
@@ -44,8 +43,8 @@ import { Missile } from './missile.js'
 import { SHIP_SCALE, STAR_ENABLE, SERVER_HEIGHT, SERVER_WIDTH, STAR_RADIUS, WEDGE, WEDGE_FLAME, ROTATION_DELTA } from './parm.js'
 import { Ship, ship_burn } from './ship.js'
 import { Star, star_gravity } from './star.js'
-import { ship_draw, star_draw, draw_clear } from './draw.js'
-import { body_update_xy, body_rotate } from './body.js'
+import { ship_draw, star_draw, missile_draw, draw_clear } from './draw.js'
+import { body_update_xy, body_rotate, body_distance } from './body.js'
 import { getControl } from './controls.js'
 
 
@@ -54,28 +53,25 @@ const radius = SHIP_SCALE;
 let ship2 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(3/4), SERVER_HEIGHT*(1/2), 0 , -0.05, radius, -Math.PI/2);
 let ship1 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(1/4), SERVER_HEIGHT*(1/2), 0 ,  0.05, radius,  Math.PI/2);
 
-// assign ships to control slots (ship i get control i-1)
+// assign ships to control slots in a list of controls
 ship1.slot = 0;
 ship2.slot = 1;
 
 let star = Star(SERVER_WIDTH/2, SERVER_HEIGHT/2, STAR_RADIUS );  // new
 
-console.log(star);
-
 let space = { x: SERVER_WIDTH, y: SERVER_HEIGHT };   // note that space is in server coordinates -- correct later
 
 let control = getControl();
 
-// put all game bodies in one flat array.  Bodies will have a tag to make further distinctions as necessary.
+// put all game bodies in one flat array.  Bodies have a tag to make further distinctions as needed
 	
 let everybody = [ship1, ship2, star];
-
-console.log(everybody);
 
 function draw(body) {
 	switch(body.tag) {
 		case "ship" : ship_draw(body);  break;
 	    case "star" : star_draw(body);  break;
+	    case "missile" : missile_draw(body); break;
 	}
 }
 
@@ -90,32 +86,57 @@ function animate() {
 //
 // Destruction 
 // * destroy any bodies colliding with sun
+   everybody = everybody.filter(body=> (body.tag != "ship" || body_distance(body,star) > star.radius));
+
 // * destroy any ships colliding with another ship
+
 // * destroy any ships colliding with missile
+
 // * destroy any missiles with no life
+
+   everybody = everybody.map(body => (body.tag == "missile"
+   										? (body.life > 0 ? Object.assign({}, body, {life: body.life - 1})
+   											             : null)
+   										: body));
+
+   everybody = everybody.filter(body => body != null);
+
+
 // * destroy any missiles colliding with ship
+
 // * destroy any missiles colliding with missile
 //
 // Controls
 
 // * read and record the control states
-	let ships = everybody.filter(body => body.tag == "ship"); 
 
     
 // * pick a time dt to apply the control
-	let dt = 1000/60;
+	//let dt = 1000/60;
+	let dt = 1000/200
 
 // * apply any rotations implied by control
 
-    console.log(control[0]);
+    //console.log(control[0]);
 
     const rotateR = body => (body.tag == "ship" && (control[body.slot].rotateRight && body_rotate(body,-ROTATION_DELTA,dt)) || body);
-    const rotateL = body => (body.tag == "ship" && (control[body.slot].rotateLeft && body_rotate(body,  ROTATION_DELTA,dt)) || body);
+    const rotateL = body => (body.tag == "ship" && (control[body.slot].rotateLeft  && body_rotate(body,  ROTATION_DELTA,dt)) || body);
     everybody = everybody.map(rotateR);
     everybody = everybody.map(rotateL);
 
 // * apply any forces implied by the control
-    everybody = everybody.map(body => (body.tag == "ship" && (control[body.slot].burnOn && ship_burn(body,dt))  || body));
+
+    const doBurn = (body,dt) => (body.tag == "ship" && control[body.slot].burnOn 
+    	                             ?  Object.assign({}, ship_burn(body,dt), { burnOn: true} )
+    	                             :  Object.assign({}, body, { burnOn: false }));
+
+    everybody = everybody.map(body => doBurn(body,dt));
+
+ // * create any missiles fire implied by the control - TBD: missile on fire on false->true transitions
+    
+    const missile_fire = body => (body.tag == "ship" && control[body.slot].fire ? Missile(body) : null);
+    const new_missiles = everybody.map(missile_fire).filter(x => x != null);
+    everybody = everybody.concat(new_missiles);
 
 //  Gravity
 // * apply any forces implied by the sun
@@ -125,7 +146,7 @@ function animate() {
 // * update xy for all bodies
 	everybody = everybody.map(body => body_update_xy(body,space,dt));
 
-// Display
+// Display - in multiplayer, this will send everybody to the server
 // * update the display from the current position/rotation of all existing bodies
     draw_clear();
 	everybody.map(draw);
@@ -135,36 +156,6 @@ function animate() {
 // * sparkling sun animation managed on client side
 // * potential for different client side skins
 
-	//c.clearRect(0,0,innerWidth,innerHeight);
-
-
-	/**********************************
-    // OLD CHEESE
-    //
-	// Update Star - assign gravitational forces to ships
-	if (starEnable) {
-		star.update(c,shipArray);
-	}
-
-	// Update Shipes
-	for (var i  = 0; i < shipArray.length; i++) {
-		shipArray[i].update(c)
-	}
-
-    // Clear away missiles whose life has expired. 
-	// Oldest missiles are always on the front of the array
-	while( missileArray.length >0 && missileArray[0].life < 0) {
-		missileArray.shift();
-	}
-
-    // update missiles
-	for (var i = 0; i < missileArray.length; i++) {
-		missileArray[i].update(c,shipArray)
-	}
-
-	// remove any exploded ships 
-	explodeShips();
-	*************************************/
 }
 
 animate();

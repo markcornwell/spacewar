@@ -139,17 +139,17 @@ if (isTouchDevice){
 		};
 
 		leftRot.ontouchstart = function(){
-			control2.rotateLeft = true;
+			control1.rotateLeft = true;
 		};
 		leftRot.ontouchend = function(){
-			control2.rotateLeft = false;
+			control1.rotateLeft = false;
 		};
 
 		rightRot.ontouchstart = function(){
-			control2.rotateRight = true;
+			control1.rotateRight = true;
 		};
 		rightRot.ontouchend = function(){
-			control2.rotateRight = false;
+			control1.rotateRight = false;
 		};
 
 		// Enable toggling of touch controls (for touchscreen laptops, external keyboards/gamepads, etc)

@@ -68,17 +68,15 @@ function animate() {
 // * destroy any ships colliding with another ship
 
 // * destroy any ships colliding with missile
-//
-   let missiles = everybody.filter(body => body.tag == "missile");
-   let missile_hits = (dt,missiles,body) => 
-            missiles.map(msl => missile_hit(msl,body,dt)).reduce(or,false); 
-   everybody = everybody.filter(body => (body.tag !="ship" || !missile_hits(dt,missiles,body)));
-
 // * destroy any missiles colliding with ship -- by symmetry
-//
-   let ships = everybody.filter(body => body.tag == "ship");
-   let missile_hits2 = (dt,missile,ships) => 
-            ships.map(shp => missile_hit(missile,shp,dt)).reduce(or,false); 
+
+   let missiles = everybody.filter(body => body.tag == "missile");
+   let ships    = everybody.filter(body => body.tag == "ship");
+
+   let missile_hits1 = (dt,missiles,body) => missiles.map(msl => missile_hit(msl,body,dt)).reduce(or,false); 
+   let missile_hits2 = (dt,missile,ships) => ships.map(shp => missile_hit(missile,shp,dt)).reduce(or,false); 
+
+   everybody = everybody.filter(body => (body.tag !="ship" || !missile_hits1(dt,missiles,body)));
    everybody = everybody.filter(body => (body.tag !="missile" || !missile_hits2(dt,body,ships)));
 
    console.log(missiles.length);

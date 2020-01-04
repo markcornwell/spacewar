@@ -31,8 +31,9 @@ function Control() {
 export var control = [ Control(), Control() ];
 */
 export function getControl() {
-	return [ control1, control2 ]
+	return JSON.stringify([ control1, control2 ]);
 }
+
 
 let control1 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false, fireEnable: true };
 let control2 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false, fireEnable: true };
@@ -56,7 +57,7 @@ function commandKeyDown(e) {
 			control1.burnOn = true;
 			break;
 		case "KeyW":
-		    control1.fire = true;
+			control1.fire = true;
 			break;
 		case "KeyJ":
 			control2.rotateLeft = true;
@@ -86,7 +87,7 @@ function commandKeyUp(e) {
 			control1.burnOn = false;
 			break;
 		case "KeyW":
-			control1.fire = false;
+		    control1.fire = false;
 			break;
 		case "KeyJ":
 			control2.rotateLeft = false;
@@ -124,31 +125,31 @@ if (isTouchDevice){
 		  rightRot = document.querySelector('#right');
 
 		burnBtn.ontouchstart = function(){
-			control[0].burnOn = true;
+			control1.burnOn = true;
 		};
 		burnBtn.ontouchend = function(){
-			control[0].burnOn = false;
+			control1.burnOn = false;
 		};
 
 		fireBtn.ontouchstart = function(){
-			control[0].fire = true;
+			control1.fire = true;
 		};
 		fireBtn.ontouchend = function(){
-			control[0].fire = false;
+			control1.fire = false;
 		};
 
 		leftRot.ontouchstart = function(){
-			control[0].rotateLeft = true;
+			control2.rotateLeft = true;
 		};
 		leftRot.ontouchend = function(){
-			control[0].rotateLeft = false;
+			control2.rotateLeft = false;
 		};
 
 		rightRot.ontouchstart = function(){
-			control[0].rotateRight = true;
+			control2.rotateRight = true;
 		};
 		rightRot.ontouchend = function(){
-			control[0].rotateRight = false;
+			control2.rotateRight = false;
 		};
 
 		// Enable toggling of touch controls (for touchscreen laptops, external keyboards/gamepads, etc)

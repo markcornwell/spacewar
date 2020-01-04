@@ -44,4 +44,3 @@ export function body_distance_squared(body1, body2) {
 export function body_distance(body1, body2) {
 	return Math.sqrt(body_distance_squared(body1,body2))
 }
-

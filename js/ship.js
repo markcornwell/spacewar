@@ -24,13 +24,15 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 		radius: radius,
 		theta: theta,
 		burnOn: false,
-		fire: false,
 		shape: shape,
 		flame: flame,
 		explode: false,
 	}
 }
 
+export function ship_shapeInPosition(ship) {
+	return shape_translate(shape_rotate(ship.shape, ship.theta),{ x: ship.x, y: ship.y });
+}
 
 export function ship_burn(ship,dt) {
 	let new_dx = ship.dx + BURN_FORCE * dt * Math.cos(ship.theta);

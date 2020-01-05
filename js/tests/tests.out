@@ -1,0 +1,52 @@
+Sun Jan  5 15:12:00 EST 2020
+10  pass
+11  pass
+polyLine hit!
+20  pass
+21  pass
+00  pass
+10  pass
+11  pass
+12  pass
+13  pass
+13  FAIL
+3.141592653589793
+6.283185307179586
+{
+  a11: 1,
+  a12: 2.4492935982947064e-16,
+  a21: -2.4492935982947064e-16,
+  a22: 1
+}
+00  pass
+10  pass
+11  pass
+12  pass
+13  pass
+21  pass
+22  pass
+31  pass
+31  pass
+00  pass
+10  pass
+11  pass
+12  pass
+13  pass
+21  pass
+22  pass
+undefined
+10  pass
+12  pass
+13  pass
+14  pass
+1000
+00  pass
+10  pass
+11  pass
+20  pass
+21  pass
+22  pass
+23  pass
+24  pass
+30  pass
+31  pass

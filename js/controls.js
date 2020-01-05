@@ -23,13 +23,6 @@
 // may be either a human or the local AI.
 //----------------------------------------------------------------
 
-/*
-function Control() {
-	return { rotateLeft: false, rotateRight: false, burnOn: false, fire: false } 
-}
-
-export var control = [ Control(), Control() ];
-*/
 export function getControl() {
 	return JSON.stringify([ control1, control2 ]);
 }
@@ -38,12 +31,10 @@ export function getControl() {
 let control1 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false, fireEnable: true };
 let control2 = { rotateLeft: false, rotateRight: false, burnOn: false, fire: false, fireEnable: true };
 
-
 document.addEventListener('keydown', commandKeyDown);
 document.addEventListener('keyup', commandKeyUp);
 
 function commandKeyDown(e) {
-	//console.log(e);
 
 	// Cleaned up confusing if/else chain with a switch statement
 	switch(e.code){

@@ -8,12 +8,6 @@ import { BURN_FORCE, ROTATION_DELTA } from './parm.js'
 import { Shape, shape_translate, shape_rotate } from './shape.js'
 import { Missile } from './missile.js'
 
-
-export function explodeShips() {
-	//shipArray = shipArray.filter(ship => (ship.explode == false));
-	return shipArray.filter(ship => (ship.explode == false));
-}
-
 export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 	return {
 		tag: "ship",
@@ -26,7 +20,7 @@ export function Ship(shape,flame,x,y,dx,dy,radius,theta) {
 		burnOn: false,
 		shape: shape,
 		flame: flame,
-		explode: false,
+		//explode: false,
 	}
 }
 

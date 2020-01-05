@@ -25,11 +25,17 @@ canvas.height = window.innerHeight;
 var c = canvas.getContext('2d');
 c.strokeStyle = 'white';
 
-	//c.clearRect(0,0,innerWidth,innerHeight);
-
 export function draw_clear() {
 	//c.clearRect(0,0,space.x,space.y);
 	c.clearRect(0,0,canvas.width,canvas.height);
+}
+
+export function draw(body) {
+	switch(body.tag) {
+		case "ship" : ship_draw(body);  break;
+        case "star" : star_draw(body);  break;
+        case "missile" : missile_draw(body); break;
+	}
 }
 
 export function draw_circle(body) {  // works on any body with a radius

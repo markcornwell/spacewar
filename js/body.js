@@ -1,6 +1,5 @@
 // body.js
 //
-// can use body_rotate on ships
 
 // anything with a theta property is rotatable
 export function rotatable(body) { return body.theta != undefined }

@@ -4,6 +4,8 @@
 import { check } from './check.js'
 import { rotatable, body_rotate, body_update_xy, body_update_dxdy } from '../body.js'
 
+console.log( "test-body.js" );
+
 let space = { x: 1000, y: 1000 };
 
 console.log(space.x);

@@ -19,11 +19,21 @@
 
 import { shape_translate, shape_rotate } from './shape.js'
 
-var canvas = document.querySelector('canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-var c = canvas.getContext('2d');
-c.strokeStyle = 'white';
+// Test if code is running in a browser; else assume node.js
+// browser :: () -> boolean
+const browser = typeof document != 'undefined';
+
+if (browser) {
+	var canvas = document.querySelector('canvas');
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	var c = canvas.getContext('2d');
+	c.strokeStyle = 'white';
+}
+
+// the dimensions of bounded space infinite in any direction
+export var space = (browser ? {x: canvas.width, y: canvas.height }
+						    : {x: 1000, y:1000 });
 
 export function draw_clear() {
 	//c.clearRect(0,0,space.x,space.y);

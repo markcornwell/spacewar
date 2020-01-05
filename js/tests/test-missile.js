@@ -1,19 +1,22 @@
 // test-missile.js
 //
 import { check } from './check.js'
-import { SHIP_SCALE, SERVER_WIDTH, SERVER_HEIGHT, WEDGE, WEDGE_FLAME} from '../parm.js'
+import { SHIP_SCALE, WEDGE, WEDGE_FLAME} from '../parm.js'
 //import { Vector } from '../mat2d.js'
 import { Missile } from '../missile.js'
 import { Ship } from '../ship.js'
 import { Shape } from '../shape.js'
+import { space } from '../draw.js'
+
+console.log( "test-missle.js" );
 
 check("00",0,0);
 
 const radius = SHIP_SCALE;
 
 
-var ship2 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(3/4), SERVER_HEIGHT*(1/2), 0 , -0.5, radius, -Math.PI/2);
-var ship1 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(1/4), SERVER_HEIGHT*(1/2), 0 ,  0.5, radius,  Math.PI/2);
+var ship2 = Ship(WEDGE, WEDGE_FLAME, space.x*(3/4), space.y*(1/2), 0 , -0.5, radius, -Math.PI/2);
+var ship1 = Ship(WEDGE, WEDGE_FLAME, space.x*(1/4), space.y*(1/2), 0 ,  0.5, radius,  Math.PI/2);
 
 check("10", radius, SHIP_SCALE);
 check("11", WEDGE.pointList.length, 3);

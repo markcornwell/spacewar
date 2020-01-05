@@ -11,6 +11,8 @@ import { vector_translate, vector_rotate } from '../mat2d.js'
 import { Shape, shape_translate, shape_rotate } from '../shape.js'
 import { mat2d_R } from '../mat2d.js'
 
+console.log( "test-draw.js" );
+
 let body1 = { x: 100, y: 100 , radius: 10 };
 
 

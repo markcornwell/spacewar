@@ -3,6 +3,8 @@
 import { check } from './check.js';
 import { lineLine, polyLine } from '../collide.js'
 
+console.log( "test-collide.js" );
+
 // Test cases
 check("10", lineLine(-5,-5, +5,+5, -5,+5, +5,-5), true );
 check("11", lineLine( 0,0,  0,10,  5,0,  5,10 ), false );

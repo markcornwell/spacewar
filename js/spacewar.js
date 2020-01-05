@@ -8,25 +8,25 @@
 //-----------------------------------------------------------------------------------------------------------
 
 
-import { SHIP_SCALE, STAR_ENABLE, SERVER_HEIGHT, SERVER_WIDTH, STAR_RADIUS, WEDGE, WEDGE_FLAME, ROTATION_DELTA, TIME_DELTA } from './parm.js'
+import { SHIP_SCALE, STAR_ENABLE, STAR_RADIUS, WEDGE, WEDGE_FLAME, ROTATION_DELTA, TIME_DELTA } from './parm.js'
 import { Missile, missile_hit} from './missile.js'
 import { Ship, ship_burn } from './ship.js'
 import { Star, star_gravity } from './star.js'
-import { draw, draw_clear } from './draw.js'
+import { draw, draw_clear, space } from './draw.js'
 import { body_update_xy, body_rotate, body_distance } from './body.js'
 import { getControl } from './controls.js'
 
 const radius = SHIP_SCALE;
 
-let ship1 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(1/4), SERVER_HEIGHT*(1/2), 0 ,  0.05, radius,  Math.PI/2);
-let ship2 = Ship(WEDGE, WEDGE_FLAME, SERVER_WIDTH*(3/4), SERVER_HEIGHT*(1/2), 0 , -0.05, radius, -Math.PI/2);
+let ship1 = Ship(WEDGE, WEDGE_FLAME, space.x*(1/4), space.y*(1/2), 0 ,  0.05, radius,  Math.PI/2);
+let ship2 = Ship(WEDGE, WEDGE_FLAME, space.x*(3/4), space.y*(1/2), 0 , -0.05, radius, -Math.PI/2);
 
 // assign ships to control slots in a list of controls
 ship1.slot = 0;
 ship2.slot = 1;
 
-let star = Star(SERVER_WIDTH/2, SERVER_HEIGHT/2, STAR_RADIUS );  // new
-let space = { x: SERVER_WIDTH, y: SERVER_HEIGHT };   // note that space is in server coordinates -- correct later
+let star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
+//let space = { x: space.x, y: space.y };   // note that space is in server coordinates -- correct later
 
 let dt = TIME_DELTA;
 

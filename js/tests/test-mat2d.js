@@ -4,6 +4,7 @@
 import { check } from './check.js'
 import { Matrix, mat2d_multm, mat2d_multv, mat2d_R } from '../mat2d.js'
 
+console.log( "test-mat2d.js" );
 
 check("00",0,0);
 

@@ -28,7 +28,8 @@ if (browser) {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	var c = canvas.getContext('2d');
-	c.strokeStyle = 'white';
+	//c.strokeStyle = 'green';
+	c.strokeStyle = '#39FF14'; // NEN
 }
 
 // the dimensions of bounded space infinite in any direction

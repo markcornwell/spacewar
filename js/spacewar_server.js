@@ -102,7 +102,6 @@ let star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
 let dt = TIME_DELTA;
 
 
-
 // put all game bodies in one flat array.  Bodies have a tag to make further distinctions as needed
 //let everybody = [ship1, ship2];
 let everybody = [];
@@ -165,6 +164,7 @@ function animate() {
 // * pick a time dt to apply the control
 	//let dt = 1000/60;
 
+/****************************************** ADD IN INCREMENTALLY
    console.log("control: ", control);
    console.log("everybody: ", everybody);
 
@@ -188,6 +188,7 @@ function animate() {
 
 
     everybody = everybody.concat(new_missiles);
+**************************************************************/
 
 //  Gravity
 // * apply any gravitational forces implied by any stars
@@ -200,7 +201,7 @@ function animate() {
 // Display - in multiplayer, this will send everybody to the server
 // * update the display from the current position/rotation of all existing bodies
 
-    io.sockets.emit("state", everybody);
+     io.sockets.emit("state", everybody);
 
   //draw_clear();
 	//everybody.map(draw);

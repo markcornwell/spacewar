@@ -28,13 +28,14 @@ if (browser) {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	var c = canvas.getContext('2d');
+	console.log("context: ", c);
 	//c.strokeStyle = 'green';
 	c.strokeStyle = '#39FF14'; // NEN
 }
 
 // the dimensions of bounded space infinite in any direction
 export var space = (browser ? {x: canvas.width, y: canvas.height }
-						    : {x: 1000, y:1000 });
+						    : {x: 500, y:500 });
 
 export function draw_clear() {
 	//c.clearRect(0,0,space.x,space.y);
@@ -42,6 +43,7 @@ export function draw_clear() {
 }
 
 export function draw(body) {
+	console.log("draw: ", body);
 	switch(body.tag) {
 		case "ship" : ship_draw(body);  break;
         case "star" : star_draw(body);  break;
@@ -62,12 +64,14 @@ export function draw_circle(body) {  // works on any body with a radius
 export function star_draw(body) {
 	// draw star with a sparking effect
 	//console.log("star_draw",body);
+	console.log("star_draw: ", body);
 	c.beginPath();
 	for (var i = 0; i < 6; i++) {			
 		c.moveTo(body.x,body.y);
 		c.lineTo(body.x + (Math.random() - 0.5) * 2*body.radius,
 			     body.y + (Math.random() - 0.5) * 2*body.radius);
-	}
+	};
+	c.strokeStyle = '#39FF14';
 	c.stroke();
 }
 

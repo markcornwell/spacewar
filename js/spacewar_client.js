@@ -5,6 +5,8 @@
 
 //import 'socket.io-client';
 
+import { draw } from '/js/draw.js'
+
 var socket = io();
 socket.on('message', function(data) {
   console.log(data);
@@ -206,16 +208,20 @@ document.addEventListener('keyup', function(event) {
 */
 
 var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = 500;
+canvas.height = 500;
 var context = canvas.getContext('2d');
-socket.on('state', function(players) {
-  context.clearRect(0, 0, 800, 600);
+
+socket.on('state', function(everybody) {
+  context.clearRect(0, 0, 500, 500);
   context.fillStyle = 'green';
-  for (var id in players) {
-    var player = players[id];
+  for (var id in everybody) {
+    var body = everybody[id];
+    /**
     context.beginPath();
-    context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+    context.arc(body.x, body.y, 10, 0, 2 * Math.PI);
     context.fill();
+    **/
+    draw(body);
   }
 });

@@ -9,7 +9,7 @@ export const ROTATION_DELTA = Math.PI/250;    // how fast to rotate ship
 export const BURN_FORCE = 0.001;              // force of the thruster during a burn
 export const STAR_RADIUS = 10;                // desctuctive radius of the star
 export const MASS_SHIP = 0.1;                // mass of a ship
-export const MASS_STAR = 80;                  // mass of the star
+export const MASS_STAR = 0;    // 80          // mass of the star
 export const STAR_ENABLE = true;              // set to false to run without the center star
 export const TIME_DELTA = 1000/500;           // time increment per screen refresh
 

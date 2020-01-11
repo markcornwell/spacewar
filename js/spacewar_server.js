@@ -4,35 +4,113 @@
 // MIT License; see LICENSE for details
 //
 // Ref: https://en.wikipedia.org/wiki/Spacewar!
+//
+//-----------------------------------------------------------------------------------------------------------
+//  Multiplayer Client/Server Version -- SERVER SIDE FUNCTIONS
+//
+//  Everything in this file is on the server side.  The server handles all the physics of the ships.  The
+//  client handles all the rendering.  THe client send the control setting to the server.  Thte takes those 
+//  and feeds them into the physics prior to the updates of the physics engine.
+//
 //-----------------------------------------------------------------------------------------------------------
 
 import { SHIP_SCALE, STAR_ENABLE, STAR_RADIUS, WEDGE, WEDGE_FLAME, ROTATION_DELTA, TIME_DELTA } from './parm.js'
 import { Missile, missile_hit} from './missile.js'
 import { Ship, ship_burn } from './ship.js'
 import { Star, star_gravity } from './star.js'
-import { draw, draw_clear, space } from './draw.js'
+import { space } from './draw.js'
 import { body_update_xy, body_rotate, body_distance } from './body.js'
-import { getControl } from './controls.js'
+//import { getControl } from './controls2.js'
 
-const radius = SHIP_SCALE;
 
-let ship1 = Ship(WEDGE, WEDGE_FLAME, space.x*(1/4), space.y*(1/2), 0 ,  0.05, radius,  Math.PI/2);
-let ship2 = Ship(WEDGE, WEDGE_FLAME, space.x*(3/4), space.y*(1/2), 0 , -0.05, radius, -Math.PI/2);
+// Server Side Dependencies -- pulled from server.js exemplar
+import express from 'express'
+import http from 'http'
+import path from 'path'
+import socketIO from 'socket.io'
 
-// assign ships to control slots in a list of controls
-ship1.slot = 0;
-ship2.slot = 1;
+
+const PORT = 5555;
+
+//const dirname = process.cwd() + "/"; 
+const dirname = process.cwd(); 
+
+var app = express();
+var server = http.Server(app);
+var io = socketIO(server);
+app.set('port', PORT);
+//app.use('/js', express.static(dirname + '/js'));
+app.use('/js', express.static(path.join(dirname, "js")));
+app.use('/css', express.static(path.join(dirname, "css")));
+app.use('/web_modules', express.static(path.join(dirname,"web_modules")));
+
+// Routing
+app.get('/', function(request, response) {
+  //response.sendFile(path.join(dirname, '/index.html'));
+  response.sendFile(path.join(dirname, '/spacewar2.html'));
+});
+
+// Starts the server.
+server.listen(PORT, function() {
+  console.log('Starting server on port ',PORT);
+});
+
+// Add the WebSocket handlers
+io.on('connection', function(socket) {
+  console.log("connected");
+});
+
+var control = {};   // maps socket.id to controls
+
+// a list of available ships, including where they orginate
+var shipsAvail = [
+  Ship(WEDGE, WEDGE_FLAME, space.x*(1/4), space.y*(1/2), 0 ,  0.05, SHIP_SCALE,  Math.PI/2),
+  Ship(WEDGE, WEDGE_FLAME, space.x*(3/4), space.y*(1/2), 0 , -0.05, SHIP_SCALE, -Math.PI/2),
+  ];
+
+console.log("shipsAvail: ",shipsAvail.length)
+
+//---  new stuff
+
+io.on('connection', function(socket) {
+  // when a new connection happens we need to create the ship for that connection
+  // and associate it with the socket and push it onto the everybody list.
+
+  socket.on('new player', function() {
+    if (shipsAvail.length > 0) {
+      let ship = shipsAvail.pop()
+      ship.slot = socket.id;
+      everybody.push(ship);
+    }
+    else {
+      // --- TBD --- need to push a message to the player ---- TBD ----
+      console.log("no ships available");  
+    };
+  });
+
+  socket.on('control', function(data) {
+    // update control state as it comes in
+    control[socket.id] = data;
+  });
+});
+
+
 
 let star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
-//let space = { x: space.x, y: space.y };   // note that space is in server coordinates -- correct later
 
+//let space = { x: space.x, y: space.y };   // note that space is in server coordinates -- correct later
 let dt = TIME_DELTA;
 
+
+
 // put all game bodies in one flat array.  Bodies have a tag to make further distinctions as needed
-let everybody = [ship1, ship2];
+//let everybody = [ship1, ship2];
+let everybody = [];
 if (STAR_ENABLE) {
     everybody.push(star);
 }
+
+console.log("body count: ",everybody.length);
 
 const nonNull = x => (x != null);
 const or = (a,b) => a || b;   
@@ -41,10 +119,15 @@ const or = (a,b) => a || b;
 // ANIMATE -- main animation loop   (Called about 60 times a second)
 //--------------------------------------------------------------------
 
-function animate() {
-	requestAnimationFrame(animate);
+// Server side does not have an Animate loop so we cannot use request animation frame
+// on the server side.  Replace this with a calls to set Interval.
 
-// outline of main animatin loop ( Play mode )
+setInterval(animate, 1000 / 60);
+
+
+function animate() {
+//	requestAnimationFrame(animate);
+
 //---------------
 // Destruction 
 //---------------
@@ -77,10 +160,13 @@ function animate() {
 // Controls
 //-----------
 // * read and record the control states
-   let control = JSON.parse(getControl());
+//   let control = JSON.parse(getControl());
     
 // * pick a time dt to apply the control
 	//let dt = 1000/60;
+
+   console.log("control: ", control);
+   console.log("everybody: ", everybody);
 
 // * apply any rotations implied by control -- perhaps pull dt from a timestamp on the control ??
     const rotateR = body => (body.tag == "ship" && control[body.slot].rotateRight && body_rotate(body,-ROTATION_DELTA,dt)) || body;
@@ -104,17 +190,20 @@ function animate() {
     everybody = everybody.concat(new_missiles);
 
 //  Gravity
-// * apply any forces implied by any stars
-	everybody = everybody.map(body => star_gravity(star,body,dt));
+// * apply any gravitational forces implied by any stars
+	   everybody = everybody.map(body => star_gravity(star,body,dt));
 //
 // Motions
-// * update xy for all bodies
-	everybody = everybody.map(body => body_update_xy(body,space,dt));
+// * update xy for by dxdy * dt all bodies
+	   everybody = everybody.map(body => body_update_xy(body,space,dt));
 
 // Display - in multiplayer, this will send everybody to the server
 // * update the display from the current position/rotation of all existing bodies
-  draw_clear();
-	everybody.map(draw);
+
+    io.sockets.emit("state", everybody);
+
+  //draw_clear();
+	//everybody.map(draw);
 
 // Note: 
 // * collisions create explosion animations managed on client side
@@ -123,4 +212,4 @@ function animate() {
 
 }
 
-animate();
+//animate();

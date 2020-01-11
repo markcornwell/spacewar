@@ -13,8 +13,7 @@ import path from 'path'
 import socketIO from 'socket.io'
 
 const dirname = process.cwd() + "/"; 
-
-console.log(dirname);
+//console.log(dirname);
 
 var app = express();
 var server = http.Server(app);
@@ -38,18 +37,22 @@ io.on('connection', function(socket) {
 });
 
 // for testing
+/*
 setInterval(function() {
   io.sockets.emit('message', 'hi!');
 }, 1000);
+*/
 
 var players = {};
+
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     players[socket.id] = {
       x: 300,
       y: 300
     };
-  }); 
+  });
+
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
     if (data.left) {

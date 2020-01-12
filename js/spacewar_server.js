@@ -164,30 +164,55 @@ function animate() {
 // * pick a time dt to apply the control
 	//let dt = 1000/60;
 
-/****************************************** ADD IN INCREMENTALLY
+
    console.log("control: ", control);
    console.log("everybody: ", everybody);
 
+
 // * apply any rotations implied by control -- perhaps pull dt from a timestamp on the control ??
-    const rotateR = body => (body.tag == "ship" && control[body.slot].rotateRight && body_rotate(body,-ROTATION_DELTA,dt)) || body;
-    const rotateL = body => (body.tag == "ship" && control[body.slot].rotateLeft  && body_rotate(body,  ROTATION_DELTA,dt)) || body;
+    const rotateR = body => (body.tag == "ship" 
+                                      && control[body.slot] != undefined
+                                      && control[body.slot].rotateRight 
+                                      && body_rotate(body,-ROTATION_DELTA,dt)
+                            ) || body;
+
+    const rotateL = body => (body.tag == "ship" 
+                                      && control[body.slot] != undefined
+                                      && control[body.slot].rotateLeft  
+                                      && body_rotate(body,  ROTATION_DELTA,dt)
+                            ) || body;
+
 
     everybody = everybody.map(rotateR);
     everybody = everybody.map(rotateL);
 
 // * apply any forces implied by the control
-    const doBurn = (body,dt) => (body.tag == "ship" && control[body.slot].burnOn 
+    const doBurn = (body,dt) => (body.tag == "ship" 
+                                          && control[body.slot] != undefined
+                                          && control[body.slot].burnOn 
     	                             ?  Object.assign({}, ship_burn(body,dt), { burnOn: true} )
     	                             :  Object.assign({}, body, { burnOn: false }));
 
     everybody = everybody.map(body => doBurn(body,dt));
 
+    
+
  // * create abt missiles fire implied by the control - TBD: missile on fire on false->true transitions
-    const missile_fire = body => (body.tag == "ship" && control[body.slot].fire  ? Missile(body) : null);
+
+    const missile_fire = body => (body.tag == "ship" 
+                                           && control[body.slot] != undefined
+                                           && control[body.slot].fire  
+                                    ? Missile(body) 
+                                    : null );
+
     const new_missiles = everybody.map(missile_fire).filter(nonNull);
 
 
+
+
     everybody = everybody.concat(new_missiles);
+
+  /****************************************** ADD IN INCREMENTALLY       
 **************************************************************/
 
 //  Gravity

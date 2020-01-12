@@ -110,7 +110,7 @@ function commandKeyUp(e) {
 // ------------------------------------------------
 
 // Detect if screen is touch-enabled (will return true for any touch screen device, not just iOS/Android)
-const   isTouchDevice = 'ontouchstart' in document.documentElement;
+const isTouchDevice = 'ontouchstart' in document.documentElement;
 const btnsToggle = document.querySelector('#touch-toggle');
 const mobileControls = document.querySelector('#mobile-controls');
 
@@ -165,48 +165,6 @@ if (isTouchDevice){
 }
 
 
-
-/*
-var movement = {
-  up: false,
-  down: false,
-  left: false,
-  right: false
-}
-document.addEventListener('keydown', function(event) {
-  switch (event.keyCode) {
-    case 65: // A
-      movement.left = true;
-      break;
-    case 87: // W
-      movement.up = true;
-      break;
-    case 68: // D
-      movement.right = true;
-      break;
-    case 83: // S
-      movement.down = true;
-      break;
-  }
-});
-document.addEventListener('keyup', function(event) {
-  switch (event.keyCode) {
-    case 65: // A
-      movement.left = false;
-      break;
-    case 87: // W
-      movement.up = false;
-      break;
-    case 68: // D
-      movement.right = false;
-      break;
-    case 83: // S
-      movement.down = false;
-      break;
-  }
-});
-*/
-
 var canvas = document.getElementById('canvas');
 canvas.width = 500;
 canvas.height = 500;
@@ -217,11 +175,6 @@ socket.on('state', function(everybody) {
   context.fillStyle = 'green';
   for (var id in everybody) {
     var body = everybody[id];
-    /**
-    context.beginPath();
-    context.arc(body.x, body.y, 10, 0, 2 * Math.PI);
-    context.fill();
-    **/
     draw(body);
   }
 });

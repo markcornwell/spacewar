@@ -55,7 +55,7 @@ io.on('connection', function(socket) {
 });
 
  // maps socket.id to controls
-var control = {};  /********* MUTATABLE STATE ******/
+var control = {};                    /****** MUTATABLE STATE *****/
 
 // a list of available ships, including where they orginate
 var shipsAvail = [
@@ -65,11 +65,9 @@ var shipsAvail = [
 
 console.log("shipsAvail: ",shipsAvail.length)
 
-
 io.on('connection', function(socket) {
-  // when a new connection happens we need to create the ship for that connection
+  // when a new connection happens we need allocate a ship for that connection
   // and associate it with the socket and push it onto the everybody list.
-
   socket.on('new player', function() {
     if (shipsAvail.length > 0) {
       let ship = shipsAvail.pop()
@@ -78,14 +76,13 @@ io.on('connection', function(socket) {
     }
     else {
       console.log("no ships available"); 
-       // --- TBD --- need to push a message to the player ---- TBD ----     
+      // --- TBD --- need to push a message to the player ---- TBD ----     
     };
   });
 
+  // update control state as it comes in
   socket.on('control', function(data) {
-    // update control state as it comes in
-    control[socket.id] = data;  /*********** MUTABABLE STATE ********/
-
+    control[socket.id] = data;                /***** MUTABABLE STATE ******/
   });
 });
 
@@ -94,18 +91,13 @@ let star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
 //let space = { x: space.x, y: space.y };   // note that space is in server coordinates -- correct later
 let dt = TIME_DELTA;
 
-
-// put all game bodies in one flat array.  Bodies have a tag to make further distinctions as needed
-//let everybody = [ship1, ship2];
-
-let everybody = [];    /******* MUTATABLE STATE  **********/
+let everybody = [];    /***** MUTATABLE STATE VARIABLE  ********/
 
 if (STAR_ENABLE) {
-    everybody.push(star);  /******* MUTATABLE STATE  **********/
+    everybody.push(star);  /******* MUTATE STATE  ********/
 }
 
-console.log("body count: ",everybody.length);
-
+// utility
 const nonNull = x => (x != null);
 const or = (a,b) => a || b;   
 
@@ -131,6 +123,7 @@ function step(control, everybody) {
    everybody = everybody.filter(body=> (body.tag != "ship" || body_distance(body,star) > star.radius)); //<<<<<<
 
 // * destroy any ships colliding with another ship  --TBD
+
 // * destroy any ships colliding with missile
 // * destroy any missiles colliding with ship -- by symmetry
 
@@ -193,4 +186,3 @@ function step(control, everybody) {
             .map(body => body_update_xy(body,space,dt))
 }
 
-//animate();

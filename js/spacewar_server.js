@@ -20,8 +20,6 @@ import { Ship, ship_burn } from './ship.js'
 import { Star, star_gravity } from './star.js'
 import { space } from './draw.js'
 import { body_update_xy, body_rotate, body_distance } from './body.js'
-//import { getControl } from './controls2.js'
-
 
 // Server Side Dependencies -- pulled from server.js exemplar
 import express from 'express'
@@ -29,24 +27,20 @@ import http from 'http'
 import path from 'path'
 import socketIO from 'socket.io'
 
-
 const PORT = 5555;
 
-//const dirname = process.cwd() + "/"; 
 const dirname = process.cwd(); 
 
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 app.set('port', PORT);
-//app.use('/js', express.static(dirname + '/js'));
 app.use('/js', express.static(path.join(dirname, "js")));
 app.use('/css', express.static(path.join(dirname, "css")));
 app.use('/web_modules', express.static(path.join(dirname,"web_modules")));
 
 // Routing
 app.get('/', function(request, response) {
-  //response.sendFile(path.join(dirname, '/index.html'));
   response.sendFile(path.join(dirname, '/spacewar2.html'));
 });
 
@@ -60,7 +54,8 @@ io.on('connection', function(socket) {
   console.log("connected");
 });
 
-var control = {};   // maps socket.id to controls
+ // maps socket.id to controls
+var control = {};  /********* MUTATABLE STATE ******/
 
 // a list of available ships, including where they orginate
 var shipsAvail = [
@@ -70,7 +65,6 @@ var shipsAvail = [
 
 console.log("shipsAvail: ",shipsAvail.length)
 
-//---  new stuff
 
 io.on('connection', function(socket) {
   // when a new connection happens we need to create the ship for that connection
@@ -83,18 +77,17 @@ io.on('connection', function(socket) {
       everybody.push(ship);
     }
     else {
-      // --- TBD --- need to push a message to the player ---- TBD ----
-      console.log("no ships available");  
+      console.log("no ships available"); 
+       // --- TBD --- need to push a message to the player ---- TBD ----     
     };
   });
 
   socket.on('control', function(data) {
     // update control state as it comes in
-    control[socket.id] = data;
+    control[socket.id] = data;  /*********** MUTABABLE STATE ********/
+
   });
 });
-
-
 
 let star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
 
@@ -104,9 +97,11 @@ let dt = TIME_DELTA;
 
 // put all game bodies in one flat array.  Bodies have a tag to make further distinctions as needed
 //let everybody = [ship1, ship2];
-let everybody = [];
+
+let everybody = [];    /******* MUTATABLE STATE  **********/
+
 if (STAR_ENABLE) {
-    everybody.push(star);
+    everybody.push(star);  /******* MUTATABLE STATE  **********/
 }
 
 console.log("body count: ",everybody.length);
@@ -118,33 +113,35 @@ const or = (a,b) => a || b;
 // ANIMATE -- main animation loop   (Called about 60 times a second)
 //--------------------------------------------------------------------
 
-// Server side does not have an Animate loop so we cannot use request animation frame
-// on the server side.  Replace this with a calls to set Interval.
+setInterval(function() {
+    everybody = step(control,everybody);    // calcuate next state
+    console.log("control: ", control);                           
+    console.log("everybody: ", everybody);
+    io.sockets.emit("state", everybody);          // tell clients the new state
+  }, 
+  1000 / 60);
 
-setInterval(animate, 1000 / 60);
+//**********************************************
+// Working to make next_state fapure function
+//**********************************************
 
-
-function animate() {
-//	requestAnimationFrame(animate);
-
-//---------------
-// Destruction 
-//---------------
+// step :: contro => everybody => everybodyd
+function step(control, everybody) {
 // * destroy any bodies colliding with sun
-   everybody = everybody.filter(body=> (body.tag != "ship" || body_distance(body,star) > star.radius));
+   everybody = everybody.filter(body=> (body.tag != "ship" || body_distance(body,star) > star.radius)); //<<<<<<
 
-// * destroy any ships colliding with another ship
+// * destroy any ships colliding with another ship  --TBD
 // * destroy any ships colliding with missile
 // * destroy any missiles colliding with ship -- by symmetry
 
    let missiles = everybody.filter(body => body.tag == "missile");
    let ships    = everybody.filter(body => body.tag == "ship");
 
-   let missile_hits1 = (dt,missiles,body) => missiles.map(msl => missile_hit(msl,body,dt)).reduce(or,false); 
-   let missile_hits2 = (dt,missile,ships) => ships.map(shp => missile_hit(missile,shp,dt)).reduce(or,false); 
+   let missile_hits1 = (dt,missiles,body) => missiles.map(msl => missile_hit(msl,body,dt)).reduce(or,false);
+   let missile_hits2 = (dt,body,ships) => ships.map(shp => missile_hit(body,ships,dt)).reduce(or,false);
 
-   everybody = everybody.filter(body => (body.tag !="ship" || !missile_hits1(dt,missiles,body)));
-   everybody = everybody.filter(body => (body.tag !="missile" || !missile_hits2(dt,body,ships)));
+   everybody = everybody.filter(body => body.tag !="ship" || !missile_hits1(dt,missiles,body));
+   everybody = everybody.filter(body => body.tag !="missile" || !missile_hits2(dt,body,ships));
 
 // * destroy any missiles with no life
    everybody = everybody.map(body => 
@@ -154,19 +151,7 @@ function animate() {
 
    everybody = everybody.filter(nonNull);
 
-// * destroy any missiles colliding with missiles
-//-----------
-// Controls
-//-----------
-// * read and record the control states
-//   let control = JSON.parse(getControl());
-    
-// * pick a time dt to apply the control
-	//let dt = 1000/60;
-
-
-   console.log("control: ", control);
-   console.log("everybody: ", everybody);
+// * destroy any missiles colliding with missiles  -- tbd
 
 
 // * apply any rotations implied by control -- perhaps pull dt from a timestamp on the control ??
@@ -182,9 +167,7 @@ function animate() {
                                       && body_rotate(body,  ROTATION_DELTA,dt)
                             ) || body;
 
-
-    everybody = everybody.map(rotateR);
-    everybody = everybody.map(rotateL);
+    everybody = everybody.map(rotateR).map(rotateL);
 
 // * apply any forces implied by the control
     const doBurn = (body,dt) => (body.tag == "ship" 
@@ -194,9 +177,6 @@ function animate() {
     	                             :  Object.assign({}, body, { burnOn: false }));
 
     everybody = everybody.map(body => doBurn(body,dt));
-
-    
-
  // * create abt missiles fire implied by the control - TBD: missile on fire on false->true transitions
 
     const missile_fire = body => (body.tag == "ship" 
@@ -207,35 +187,10 @@ function animate() {
 
     const new_missiles = everybody.map(missile_fire).filter(nonNull);
 
-
-
-
-    everybody = everybody.concat(new_missiles);
-
-  /****************************************** ADD IN INCREMENTALLY       
-**************************************************************/
-
-//  Gravity
-// * apply any gravitational forces implied by any stars
-	   everybody = everybody.map(body => star_gravity(star,body,dt));
-//
-// Motions
-// * update xy for by dxdy * dt all bodies
-	   everybody = everybody.map(body => body_update_xy(body,space,dt));
-
-// Display - in multiplayer, this will send everybody to the server
-// * update the display from the current position/rotation of all existing bodies
-
-     io.sockets.emit("state", everybody);
-
-  //draw_clear();
-	//everybody.map(draw);
-
-// Note: 
-// * collisions create explosion animations managed on client side
-// * sparkling sun animation managed on client side
-// * potential for different client side skins
-
+    return everybody
+            .concat(new_missiles)
+            .map(body => star_gravity(star,body,dt))
+            .map(body => body_update_xy(body,space,dt))
 }
 
 //animate();

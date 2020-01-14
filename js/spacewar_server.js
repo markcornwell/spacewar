@@ -167,4 +167,3 @@ function step(control, everybody) {
             .map(body => star_gravity(star,body,dt))                                          // gravity (updates dx,dy)
             .map(body => body_update_xy(body,space,dt))                                       // position update
 }
-

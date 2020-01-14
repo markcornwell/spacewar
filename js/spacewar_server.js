@@ -12,6 +12,7 @@
 //  client handles all the rendering.  THe client send the control setting to the server.  Thte takes those 
 //  and feeds them into the physics prior to the updates of the physics engine.
 //
+//  Experimenting with Ramda -- didn't really use it yet
 //-----------------------------------------------------------------------------------------------------------
 
 import { SHIP_SCALE, STAR_ENABLE, STAR_RADIUS, WEDGE, WEDGE_FLAME, ROTATION_DELTA, TIME_DELTA } from './parm.js'
@@ -26,6 +27,7 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 import socketIO from 'socket.io'
+//import * as R from 'ramda'
 
 const PORT = 5555;
 
@@ -86,19 +88,13 @@ io.on('connection', function(socket) {
   });
 });
 
-let star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
+const star = Star(space.x/2, space.y/2, STAR_RADIUS );  // new
 
-//let space = { x: space.x, y: space.y };   // note that space is in server coordinates -- correct later
-let dt = TIME_DELTA;
+const dt = TIME_DELTA;
 
-let everybody = [];    /***** MUTATABLE STATE VARIABLE  ********/
+let everybody = ( STAR_ENABLE ? [ star ] : [] );    /***** MUTATABLE STATE VARIABLE  ********/
 
-if (STAR_ENABLE) {
-    everybody.push(star);  /******* MUTATE STATE  ********/
-}
 
-// utility
-const nonNull = x => (x != null);
 const or = (a,b) => a || b;   
 
 //--------------------------------------------------------------------
@@ -113,41 +109,25 @@ setInterval(function() {
   }, 
   1000 / 60);
 
-//**********************************************
-// Working to make next_state fapure function
-//**********************************************
 
-// step :: contro => everybody => everybodyd
+// step :: (control,[body]) => [body]
 function step(control, everybody) {
-// * destroy any bodies colliding with sun
-   everybody = everybody.filter(body=> (body.tag != "ship" || body_distance(body,star) > star.radius)); //<<<<<<
-
 // * destroy any ships colliding with another ship  --TBD
-
-// * destroy any ships colliding with missile
-// * destroy any missiles colliding with ship -- by symmetry
-
-   let missiles = everybody.filter(body => body.tag == "missile");
-   let ships    = everybody.filter(body => body.tag == "ship");
-
-   let missile_hits1 = (dt,missiles,body) => missiles.map(msl => missile_hit(msl,body,dt)).reduce(or,false);
-   let missile_hits2 = (dt,body,ships) => ships.map(shp => missile_hit(body,ships,dt)).reduce(or,false);
-
-   everybody = everybody.filter(body => body.tag !="ship" || !missile_hits1(dt,missiles,body));
-   everybody = everybody.filter(body => body.tag !="missile" || !missile_hits2(dt,body,ships));
-
-// * destroy any missiles with no life
-   everybody = everybody.map(body => 
-        (body.tag == "missile"
-   			? (body.life > 0 ? Object.assign({}, body, {life: body.life - 1}) : null)
-   			: body));
-
-   everybody = everybody.filter(nonNull);
-
 // * destroy any missiles colliding with missiles  -- tbd
 
+   const missiles = everybody.filter(body => body.tag == "missile");
+   const ships    = everybody.filter(body => body.tag == "ship");
 
-// * apply any rotations implied by control -- perhaps pull dt from a timestamp on the control ??
+   const missile_hits1 = (dt,missiles,body) => missiles.map(msl => missile_hit(msl,body,dt)).reduce(or,false);
+   const missile_hits2 = (dt,body,ships) => ships.map(shp => missile_hit(body,ships,dt)).reduce(or,false);
+
+// * decrement missile life  -- destroy any missiles with no life
+    const age_missile = body => 
+         (body.tag == "missile"
+            ? (body.life > 0 ? Object.assign({}, body, {life: body.life - 1}) : null)
+            : body);
+
+// * apply any rotations implied by control 
     const rotateR = body => (body.tag == "ship" 
                                       && control[body.slot] != undefined
                                       && control[body.slot].rotateRight 
@@ -160,8 +140,6 @@ function step(control, everybody) {
                                       && body_rotate(body,  ROTATION_DELTA,dt)
                             ) || body;
 
-    everybody = everybody.map(rotateR).map(rotateL);
-
 // * apply any forces implied by the control
     const doBurn = (body,dt) => (body.tag == "ship" 
                                           && control[body.slot] != undefined
@@ -169,20 +147,24 @@ function step(control, everybody) {
     	                             ?  Object.assign({}, ship_burn(body,dt), { burnOn: true} )
     	                             :  Object.assign({}, body, { burnOn: false }));
 
-    everybody = everybody.map(body => doBurn(body,dt));
- // * create abt missiles fire implied by the control - TBD: missile on fire on false->true transitions
-
+// * fire any missles implied by the control
     const missile_fire = body => (body.tag == "ship" 
                                            && control[body.slot] != undefined
                                            && control[body.slot].fire  
                                     ? Missile(body) 
                                     : null );
 
-    const new_missiles = everybody.map(missile_fire).filter(nonNull);
+    const new_missiles = everybody.map(missile_fire).filter(x => x!=null);
 
     return everybody
-            .concat(new_missiles)
-            .map(body => star_gravity(star,body,dt))
-            .map(body => body_update_xy(body,space,dt))
+            .filter(body=> (body.tag != "ship" || body_distance(body,star) > star.radius))    // ships destroyed by star
+            .filter(body => body.tag != "ship" || !missile_hits1(dt,missiles,body))           // ships hit by missles
+            .filter(body => body.tag != "missile" || !missile_hits2(dt,body,ships))           // missles that hit ships
+            .map(age_missile).filter(x => x!=null)                                            // age missles, remove if 0 life
+            .map(rotateR).map(rotateL)                                                        // rotation command
+            .map(body => doBurn(body,dt))                                                     // burn command (updates dx,dy)
+            .concat(new_missiles)                                                             // fire command
+            .map(body => star_gravity(star,body,dt))                                          // gravity (updates dx,dy)
+            .map(body => body_update_xy(body,space,dt))                                       // position update
 }
 

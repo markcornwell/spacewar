@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "(cd js/tests; ./testall.sh)",
-    "start": "node --experimental-modules js/spacewar_server.js"
+    "start": "node --experimental-modules js/spacewar_server.js",
+    "lobby": "node --experimental-modules js/lobby.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,9 @@
   },
   "homepage": "https://github.com/markcornwell/spacewar#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
+    "express-session": "^1.17.0",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0"
   },

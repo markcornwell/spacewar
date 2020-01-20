@@ -11,7 +11,7 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 //import socketIO from 'socket.io'
-import cookieParser from 'cookie-parser'
+//import cookieParser from 'cookie-parser'
 import session from 'express-session'
 
 const PORT = 4999;
@@ -23,7 +23,7 @@ var app = express();
 var server = http.Server(app);
 //var io = socketIO(server);
 
-app.use(cookieParser());
+//app.use(cookieParser());
 app.use(session({
 	secret: COOKIE_SECRET,
 //	store: sessionStore,  // connect-mongo session store
@@ -53,7 +53,6 @@ const CHALLENGE = {
 // instance each with its own distinct URL.
 let gamesInPlay = [];
 
-
 // when any requests come to the matchmaker, that request is checked for a session-id
 // if no session id is present (or the session id has expired) a new session id is
 // assigned as part of the reponse.
@@ -68,6 +67,7 @@ app.get('/lobby', function(req,res) {
 	}
 });
 
+console.log("starting lobby server on port " + PORT)
 app.listen(PORT);
 
 // Anticipate changing all these to sub-functions of lobby, invoked by an op=fcn parameter

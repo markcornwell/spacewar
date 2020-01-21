@@ -94,7 +94,6 @@ const dt = TIME_DELTA;
 
 let everybody = ( STAR_ENABLE ? [ star ] : [] );    /***** MUTATABLE STATE VARIABLE  ********/
 
-
 const or = (a,b) => a || b;   
 
 //--------------------------------------------------------------------

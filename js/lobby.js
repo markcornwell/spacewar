@@ -10,6 +10,7 @@
 import express from 'express'
 import http from 'http'
 import path from 'path'
+import cors from 'cors'
 //import socketIO from 'socket.io'
 //import cookieParser from 'cookie-parser'
 import session from 'express-session'
@@ -22,6 +23,8 @@ const dirname = process.cwd();
 var app = express();
 var server = http.Server(app);
 //var io = socketIO(server);
+
+app.use(cors());
 
 //app.use(cookieParser());
 app.use(session({

@@ -102,8 +102,8 @@ const or = (a,b) => a || b;
 
 setInterval(function() {
     everybody = step(control,everybody);    // calcuate next state
-    console.log("control: ", control);                           
-    console.log("everybody: ", everybody);
+    //console.log("control: ", control);                           
+    //console.log("everybody: ", everybody);
     io.sockets.emit("state", everybody);          // tell clients the new state
   }, 
   1000 / 60);

@@ -7,6 +7,7 @@ This project is a multiplayer version of the first true computer video game, Spa
 The game was developed for the PDP-1 and represents a major milestone in the evolution of
 computer games.  Our interpretation here tries to be true to the gameplay of that original
 game.  We want to re-create the experience of that early game, but deliver it over the internet
+to desktops, laptions, phones, and tablets
 so that players around the world can experience the immediacy of playing other human beings in
 a game of skill and cunning.
 

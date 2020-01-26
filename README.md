@@ -65,7 +65,7 @@ and collection real data from deployed systems.
 ## Monetization
 
 It turns out that Amazon does not give out high volume AWS services for free.  If a few hundred thousand
-people showed up on my server one weekend, I might see a very high bill a the end of the month.  How 
+people showed up on my server one weekend, I would see a disturbingly high bill a the end of the month.  How 
 am I going to pay that bill?  I dont' want to get stiffed for a couple of grand so that other can have
 fun.  I'm a nice guy, but I have limits.  A good market solution would be that all these users give
 someting in return so that we can all pay off Amazon and everyone is happy.

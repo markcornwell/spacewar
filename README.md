@@ -44,17 +44,17 @@ user commands.  Simple.
 _Scaability_
 
 Key the the concept of the game is that it should scale to WWW proportions.  How does the program
-behave is 10,000 people show up to play Spacewar on a find Saturday morning / Friday night depending
-where your are relative to the intermational date line.  Not optimistic that this will every happen,
-but we want our design to accomodate the possibility.
+behave if 10,000 people show up to play Spacewar on Saturday morning / Friday night, depending
+where your are relative to the intermational date line.  Not optimistic that this will ever happen,
+but we want our design to accomodate the possibility. No need to dismiss it entirely.
 
-Now the clide side all runs locally in the browsers, so scaling them is free.  We just deliver the
+Now the clide side all runs locally in the browsers, so scaling clients is free.  We just deliver the
 javascript to the browsers and they run the clients on local hardware.  The servers on the other
-hand present a challenge.  Since this is a two player game, we need to dedicate on server for every
+hand present a challenge.  Since this is a two player game, we need to dedicate one server for every
 two players.  OUr approach is to use a containerized game server so that the server for any 
 instance of the game (between 2 players) runs in its own dedicated container on a virualized host.
 
-We will need some experimentation to discover how many containers we can run per host, but I estimate
+We will need some experimentation to discover how many containers we can run per host, but lets assume
 we can get about 50 containers per host.  That means one host can service 100 simultaneous games.
 So we could scale to 1000 simultaneous games by firing up 10 hosts.
 

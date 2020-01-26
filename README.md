@@ -1,7 +1,7 @@
 # spacewar
 Javascript implementation of 1962 game Spacewar! originally developed for the PDP-1
 
-_Background_
+## Background
 
 This project is a multiplayer version of the first true computer video game, Spacewar!
 The game was developed for the PDP-1 and represents a major milestone in the evolution of
@@ -11,7 +11,7 @@ to desktops, laptions, phones, and tablets
 so that players around the world can experience the immediacy of playing other human beings in
 a game of skill and cunning.
 
-_Game Play_
+## Game Play
 
 The game is simple.  Two spaceships orbit a central star (or black hole).  The ships move
 in a flat 2D space.Each ship is gyro stabilized and can rotate right or left.  Each has a
@@ -22,7 +22,7 @@ too close to the sun, which exerts a gravitational force on the ships.
 
 That is about it.  A simple game.
 
-_Multiplayer Framework_
+## Multiplayer Framework
 
 The main challenges come in when we address the problem of two players in different locations
 playing each other.  Each player will have a client program that displays the game and captures
@@ -42,7 +42,7 @@ keyboard or touchscreen.  There is no information in the client that can let the
 So, while the server handles all the plysics, the client handles all the rendering, and interprets
 user commands.  Simple.
 
-_Scaability_
+## Scaability
 
 Key the the concept of the game is that it should scale to WWW proportions.  How does the program
 behave if 10,000 people show up to play Spacewar on Saturday morning / Friday night, depending
@@ -62,7 +62,7 @@ So we could scale to 1000 simultaneous games by firing up 10 hosts.
 Of couse these are just WAGs and we will need to adjust thost figures after running some real tests
 and collection real data from deployed systems.
 
-_Monetization_
+## Monetization
 
 It turns out that Amazon does not give out high volume AWS services for free.  If a few hundred thousand
 people showed up on my server one weekend, I might see a very high bill a the end of the month.  How 

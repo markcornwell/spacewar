@@ -1,4 +1,4 @@
-# spacewar
+# Spacewar!
 Javascript implementation of 1962 game Spacewar! originally developed for the PDP-1
 
 ## Background

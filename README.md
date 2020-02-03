@@ -7,8 +7,9 @@ This project is a multiplayer version of the first true computer video game, Spa
 
 Spacewar was developed for the PDP-1 by engineers at DEC and MIT.  Our interpretation
 here tries to be true to the gameplay of that original game.  We want to re-create
-the experience of that early game, but deliver it over the internet
-to desktops, laptions, phones, and tablets.
+the experience of that early game, but deliver it using modern equipment and
+infrastructure. By modern we mean browsers on phones, tablets, laptops and desktops
+tied together by cloud based services.
 
 ## Game Play
 

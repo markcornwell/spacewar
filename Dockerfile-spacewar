@@ -1,0 +1,17 @@
+# Dockerfile for spacewar game server 
+#  $ docker build -f './Dockerfile-spacewar' -t markcornwell/spacewar-server:1 .
+#  $ docker run -p 5555:5555 -d markcornwell/spacewar-server:1
+
+FROM node:13
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 5555
+
+CMD [ "npm", "run", "start"]

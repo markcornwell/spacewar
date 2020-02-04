@@ -1,0 +1,18 @@
+# Dockerfile for matchmaker service (lobby)
+#  $ docker build -f './Dockerfile-matchmaker' -t markcornwell/spacewar-lobby:1 .
+#  $ docker run -p 4999:4999 -d markcornwell/spacewar-matchmaker:1
+#  $ . tests/matchmaker.sh
+
+FROM node:13
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 4999
+
+CMD [ "npm", "run", "matchmaker"]

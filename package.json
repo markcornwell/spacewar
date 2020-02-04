@@ -7,7 +7,7 @@
   "scripts": {
     "test": "(cd js/tests; ./testall.sh)",
     "start": "node --experimental-modules js/spacewar_server.js",
-    "lobby": "node --experimental-modules js/lobby.js"
+    "matchmaker": "node --experimental-modules js/matchmaker.js"
   },
   "repository": {
     "type": "git",

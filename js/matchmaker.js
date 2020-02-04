@@ -1,4 +1,4 @@
-// lobby.js
+// matchmaker.js
 //
 // Server Side Dependencies -- pulled from server.js exemplar
 //
@@ -127,42 +127,7 @@ app.put('/test', function(req,res) {
 //
 //*************************
 
-console.log("starting lobby server on port " + PORT)
+console.log("starting matchmaker server on port " + PORT)
 app.listen(PORT);
 
-// Anticipate changing all these to sub-functions of lobby, invoked by an op=fcn parameter
-// should simplify the routing.  Use different rounts for other communication, like messages
-// from back end servers.  The /lobby route is for all communication with the welcome client.
 
-/*
-// Routing
-app.get('/list-challenges', function(request, response) {
-  //response.sendFile(path.join(dirname, '/spacewar2.html'));
-  console.log("got request /list-challenges");
-  response.json(`{from: "matchmaker", challenges: ${JSON.stringify(challenges)} }`)
-});
-
-app.get('/new-challenge', function(request, response) {
-	console.log("got request /new-challenge");
-	challenges.push({ challenge : "dummy", time: `${Date.now()}` });
-	response.json(`{from: "matchmaker", challenges: ${JSON.stringify(challenges)} }`)
-});
-
-app.get('/list-games', function(request, response) {
-  //response.sendFile(path.join(dirname, '/spacewar2.html'));
-  console.log("got request /list-games");
-  response.json( `{ from: "matchmaker", games: ${JSON.stringify(games)} }`);
-});
-
-
-// Starts the server.
-server.listen(PORT, function() {
-  console.log('Starting matchmaker service on port ',PORT);
-});
-
-// Add the WebSocket handlers
-io.on('connection', function(socket) {
-  console.log("connected");
-});
-
-*/

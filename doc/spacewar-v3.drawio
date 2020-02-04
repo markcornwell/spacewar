@@ -1,4 +1,4 @@
-<mxfile host="www.draw.io" modified="2020-02-04T03:59:18.207Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="0UXoAac_YjkUlAh_slvd" version="12.6.4" type="github">
+<mxfile host="www.draw.io" modified="2020-02-04T04:02:37.773Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="YDXp9iasgZZ326gTwJRb" version="12.6.4" type="github">
   <diagram name="Page-1" id="6qmY6R-QdTtVW79NaYPo">
     <mxGraphModel dx="4351" dy="732" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
@@ -79,8 +79,14 @@
         <mxCell id="Ajm1KAYPgJtNrC5xxtVR-24" value="GET spacewar.html" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="Ajm1KAYPgJtNrC5xxtVR-1" vertex="1">
           <mxGeometry x="-1785" y="290" width="110" height="20" as="geometry"/>
         </mxCell>
+        <mxCell id="-twm0bPeF-nSs2fK4Oyw-1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="Ajm1KAYPgJtNrC5xxtVR-1" source="Ajm1KAYPgJtNrC5xxtVR-25" target="-twm0bPeF-nSs2fK4Oyw-0">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
         <mxCell id="Ajm1KAYPgJtNrC5xxtVR-25" value="spacewar.html&lt;br&gt;welcome_client.js" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="Ajm1KAYPgJtNrC5xxtVR-1" vertex="1">
           <mxGeometry x="-1755" y="340" width="40" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="-twm0bPeF-nSs2fK4Oyw-0" value="spacewar.html&lt;br&gt;welcome_client.js" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="Ajm1KAYPgJtNrC5xxtVR-1">
+          <mxGeometry x="-1635" y="340" width="40" height="20" as="geometry"/>
         </mxCell>
         <mxCell id="Ajm1KAYPgJtNrC5xxtVR-26" value="GET lobby/ls, POST lobby/new&lt;br&gt;PUT lobby/play, DELETE lobby/rm" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="Ajm1KAYPgJtNrC5xxtVR-1" vertex="1">
           <mxGeometry x="-1860" y="413" width="250" height="40" as="geometry"/>

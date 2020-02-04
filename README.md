@@ -45,12 +45,11 @@ user commands.  Simple.
 ## Scalability
 
 Key the the concept of the game is that it should scale to WWW proportions.  How does the program
-behave if 10,000 people show up to play Spacewar one fine day. Not optimistic that this will ever happen,
-but I am fascinated by the challeges of designing of a system that scales to accomodate that possibility.
-Now the clide side all runs locally in the browsers, so scaling clients is free.  We just deliver the
-javascript to the browsers and they run the clients on local hardware.  The servers on the other
-hand present a challenge.  Since this is a two player game, we need to dedicate one server for every
-two players.  OUr approach is to use a containerized game server so that the server for any 
+behave if 10,000 people show up to play Spacewar one fine day. Not counting on this ever happening,
+but I am fascinated by the challeges of designing of a system that scales gracefully
+to accomodate that possibility.
+Now the client side runs in the browser, so scaling clients is almost free. The servers on the other
+hand present a challenge.  Our approach is to use a containerized game server so that any 
 instance of the game (between 2 players) runs in its own dedicated container on a virualized host.
 
 We will need some experimentation to discover how many containers we can run per host, but lets assume
@@ -58,21 +57,16 @@ we can get about 50 containers per host.  That means one host can service 100 si
 So we could scale to 1000 simultaneous games by firing up 10 hosts.
 
 Of couse these are just WAGs and we will need to adjust thost figures after running some real tests
-and collection real data from deployed systems.
+and analyzing real data collected from deployed systems.
 
 ## Monetization
 
-It turns out that Amazon does not give out high volume AWS services for free.  If a few hundred thousand
-people showed up on the server one weekend, we would see a disturbingly high bill a the end of the month.  How 
-to pay that bill?  I dont' want to get stiffed for a couple of grand so that other can have
-fun.  I'm a nice guy, but I have limits.  A good market solution would be that all these users give
-someting in return so that the game remain available, Amazon gets paid, and everyone is happy.
+It turns out that Amazon does not give out high volume AWS services for free. So, if this service were
+to scale up, once could expect to see ads, perhaps sponsors and subscription fees for premium
+services.
 
-To that end, we might have advertising, a paywall that frees players from looking at advertising, sponsors
-who might give financial support in return for promotion in the form of a logo displayed on the site.
-
-There is of course a balance. 
-
-
+There is of course a balance. We won't give out information without permission, and will never send
+unsolicited emails.  If you subscribe to our mailing list, you can opt out at anytime with a single
+click.
 
 

@@ -1,0 +1,22 @@
+# matchmaker command line utility
+#
+
+CURL='curl -H "Accept: application/json" -H "Content-Type: application/json" -X'
+
+case $1 in
+	'help' )
+		echo "usage $0 [new|ls|hello|test-reset|rm <int>"
+		;;
+	'hello')
+		${CURL} GET localhost:4999/hello
+		;;
+	'new' )
+		${CURL} POST localhost:4999/new
+		;;
+	'ls')
+		${CURL} GET localhost:4999/ls
+		;;
+	'count')
+		${CURL} GET localhost:4999/count
+		;;
+esac

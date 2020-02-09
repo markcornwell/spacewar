@@ -6,10 +6,11 @@
 // The client can present this cookie to make challenges, join games and
 // interact in the server in ways requiring identification of the client.
 // 
+// https://www.js-tutorials.com/nodejs-tutorial/crud-operations-using-nodejs-express-mongodb-mongoose/
+//
 
 import express from 'express'
-import http from 'http'
-import path from 'path'
+//import path from 'path'
 import cors from 'cors'
 //import socketIO from 'socket.io'
 //import cookieParser from 'cookie-parser'
@@ -21,10 +22,10 @@ const COOKIE_NAME = "spacewar"
 const dirname = process.cwd();
 
 var app = express();
-var server = http.Server(app);
+//var server = http.Server(app);
 //var io = socketIO(server);
 
-app.use(cors());
+//app.use(cors());
 
 //app.use(cookieParser());
 app.use(session({
@@ -35,8 +36,8 @@ app.use(session({
 	saveUninitialized: true
 }));
 
-app.use('/js', express.static(path.join(dirname, "js")));
-app.use('/web_modules', express.static(path.join(dirname,"web_modules")));
+//app.use('/js', express.static(path.join(dirname, "js")));
+//app.use('/web_modules', express.static(path.join(dirname,"web_modules")));
 
 // list of challenges available.  A Challenge is a user advertising to other
 // users that he is available for a game.  Each challenge will be a record
@@ -55,15 +56,14 @@ let gamesInPlay = [];
 
 app.get('/hello', function(req,res) {
 	console.log("session.id:", req.session.id);
-	console.log(req.session);
-
+	//console.log(req.session);
 	res.json({message: "hello"});
 });
 
 app.post('/new', function(req,res) {
 	console.log("/new");	
 	console.log("session.id:", req.session.id);
-	console.log(req.session);
+	//console.log(req.session);
 
 	challenges[req.session.id] = Challenge(challenge_number++,Date.now());
 
@@ -73,9 +73,14 @@ app.post('/new', function(req,res) {
 app.get('/ls', function(req,res) {
 	console.log("ls");	
 	console.log("session.id:", req.session.id);
-	console.log(req.session);	
-
+	//console.log(req.session);	
 	res.json(challenges);
+});
+
+app.get('/count', function(req,res) {
+	console.log("count");
+	console.log("session.id:", req.session.id);
+	res.json(Object.keys(challenges).length)
 });
 
 // do I need a route to get this fancy??

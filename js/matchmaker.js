@@ -8,6 +8,12 @@
 // 
 // https://www.js-tutorials.com/nodejs-tutorial/crud-operations-using-nodejs-express-mongodb-mongoose/
 //
+// This pattern in very differnt from that described in a tutorial I like.  Here we use app.
+// The tutorial at https://www.youtube.com/watch?v=fgTGADljAeg uses a router object instead, and
+// much cleaner and more realistic.  Does a btter job of error handling, standard REST error codes,
+// and seem cleaner and more mature.  Going to start my matchmaker.js over again from scratch.
+// 
+
 
 import express from 'express'
 //import path from 'path'

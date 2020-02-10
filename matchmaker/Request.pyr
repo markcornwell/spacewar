@@ -1,0 +1,22 @@
+## Request.pyr
+##
+get('http://localhost:3000/subscribers')
+
+
+get('http://localhost:3000/subscribers/12')
+
+
+post('http://localhost:3000/subscribers', 
+	json={ 
+		"name": "Amazing Person",
+		"subscribedToChannel": "Web Dev Simplified"
+	})
+
+get('http://localhost:3000/subscribers/5e40eb297bcc480ab18620be')
+
+delete('http://localhost:3000/subscribers/5e40eb297bcc480ab18620be')
+
+patch('http://localhost:3000/subscribers/5e40ec107bcc480ab18620bf',
+	json={
+		"name": "New Name"
+	})

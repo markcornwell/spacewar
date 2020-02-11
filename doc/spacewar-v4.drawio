@@ -1,4 +1,4 @@
-<mxfile host="www.draw.io" modified="2020-02-11T22:29:01.790Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="fzmtGzfEyZ-w1Sd18709" version="12.6.7" type="github" pages="2">
+<mxfile host="www.draw.io" modified="2020-02-11T22:35:57.942Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36" etag="E2nTqV0RAuv3qBNoZ5aP" version="12.6.7" type="github" pages="2">
   <diagram name="Page-1" id="6qmY6R-QdTtVW79NaYPo">
     <mxGraphModel dx="3980" dy="708" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
@@ -396,7 +396,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="9rw7oaXcv6XRZWg7OotB-28" value="&amp;nbsp;Instance Manager" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="9rw7oaXcv6XRZWg7OotB-1" vertex="1">
-          <mxGeometry x="420" y="20" width="40" height="20" as="geometry"/>
+          <mxGeometry x="420" y="30" width="40" height="20" as="geometry"/>
         </mxCell>
         <mxCell id="9rw7oaXcv6XRZWg7OotB-31" value="join game g" style="html=1;verticalAlign=bottom;endArrow=block;exitX=0.92;exitY=0.447;exitDx=0;exitDy=0;exitPerimeter=0;" parent="9rw7oaXcv6XRZWg7OotB-1" source="9rw7oaXcv6XRZWg7OotB-40" target="9rw7oaXcv6XRZWg7OotB-30" edge="1">
           <mxGeometry x="0.0584" y="-9" relative="1" as="geometry">

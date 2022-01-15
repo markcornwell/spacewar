@@ -17,8 +17,7 @@ check("10", mat2d_multv(I,v).x, v.x);
 check("11", mat2d_multv(I,v).y, v.y);
 check("12", mat2d_multv(mat2d_R(0),v).x, v.x);
 check("13", mat2d_multv(mat2d_R(0),v).y, v.y);
-
-check("13", mat2d_multv(mat2d_R(2*Math.PI),v).y, v.y);
+check("14", mat2d_multv(mat2d_R(2*Math.PI),v).y, v.y);
 
 console.log(Math.PI);
 console.log(2*Math.PI);
